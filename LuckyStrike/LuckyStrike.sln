@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuckyStrike", "LuckyStrike\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Input", "Input\Input.csproj", "{5E0C3378-9614-41AD-8E21-8F86A306B91E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E0C3378-9614-41AD-8E21-8F86A306B91E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E0C3378-9614-41AD-8E21-8F86A306B91E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E0C3378-9614-41AD-8E21-8F86A306B91E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E0C3378-9614-41AD-8E21-8F86A306B91E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
