@@ -10,7 +10,7 @@ namespace Common.Domain
     {
         public double Bet { get; private set; }
 
-        public override void Act(Activity activity = null)
+        public override void Act(int tableId, Activity activity = null)
         {
             
         }

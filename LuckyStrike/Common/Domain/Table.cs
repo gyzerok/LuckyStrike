@@ -25,11 +25,11 @@ namespace Common.Domain
             this.id = id;
             this.Seats = new List<AbstractSeat>();
 
-            AbstractSeat prevSeat = new EmptySeat(null, null);
+            AbstractSeat prevSeat = new EmptySeat(this, null, null);
             for (int i = 1; i < size - 1; i++)
             {
                 this.Seats.Add(prevSeat);
-                prevSeat = new EmptySeat(null, prevSeat);
+                prevSeat = new EmptySeat(this, null, prevSeat);
             }
 
             while (prevSeat.Right.Left == null)
@@ -41,7 +41,7 @@ namespace Common.Domain
 
         public void SeatPlayer(int id, AbstractPlayer player)
         {
-            var seat = new NonEmptySeat(this.Seats[id].Left, this.Seats[id].Right, player);
+            var seat = new NonEmptySeat(this, this.Seats[id].Left, this.Seats[id].Right, player);
 
             this.Seats[id] = seat;
         }
