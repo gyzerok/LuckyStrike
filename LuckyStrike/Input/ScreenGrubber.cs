@@ -8,20 +8,21 @@ namespace Input
 {
     public class ScreenGrubber : AbstractGrubber
     {
-        private int absoluteDealerPos;
         private Bitmap image;
-        
-        private readonly Color readyPixel = Color.FromArgb(255, 178, 195, 205);
-        private readonly Color handPixel = Color.FromArgb(255, 160, 73, 70);
-        private readonly Point readyPos = new Point(729, 672);
 
-        private readonly Rectangle handRect1 = new Rectangle(650, 460, 15, 40);
-        private readonly Rectangle handRect2 = new Rectangle(671, 465, 15, 40);
-        private readonly Rectangle flopRect1 = new Rectangle(533, 227, 15, 40);
-        private readonly Rectangle flopRect2 = new Rectangle(598, 227, 15, 40);
-        private readonly Rectangle flopRect3 = new Rectangle(663, 227, 15, 40);
-        private readonly Rectangle turnRect = new Rectangle(728, 227, 15, 40);
-        private readonly Rectangle riverRect = new Rectangle(793, 227, 15, 40);
+        private Color readyColor = Color.FromArgb(255, 178, 195, 205);
+        private Point readyPoint = new Point(729, 672);
+
+        private readonly List<Rectangle> cardsRects = new List<Rectangle>()
+        {
+            new Rectangle(650, 460, 15, 40), //hand1
+            new Rectangle(671, 465, 15, 40), //hand2
+            new Rectangle(533, 227, 15, 40), //flop1
+            new Rectangle(598, 227, 15, 40), //flop2
+            new Rectangle(663, 227, 15, 40), //flop3
+            new Rectangle(728, 227, 15, 40), //turn
+            new Rectangle(793, 227, 15, 40), //river
+        };
 
         private readonly List<Rectangle> betsRects = new List<Rectangle>()
         {
@@ -63,7 +64,18 @@ namespace Input
 
         public override AbstractData Grub()
         {
-            return new ScreenData();
+            this.image = ScreenGrubber.Snapshot();
+            this.GrubBetsRectangles();
+            return new ScreenData(this.GrubHandsRectangles(), this.GrubCardsRectangles(), this.GrubDealerRectangles(),
+                this.GrubBetsRectangles());
+        }
+
+        public bool IsReady()
+        {
+            this.image = ScreenGrubber.Snapshot();
+            if (image.GetPixel(this.readyPoint.X, this.readyPoint.Y) == this.readyColor)
+                return true;
+            return false;
         }
 
         public static Bitmap Snapshot()
@@ -123,6 +135,26 @@ namespace Input
         {
             var result = new List<Bitmap>();
             foreach (var rectangle in handsRects)
+            {
+                result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
+            }
+            return result;
+        }
+
+        private List<Bitmap> GrubDealerRectangles()
+        {
+            var result = new List<Bitmap>();
+            foreach (var rectangle in dealerRects)
+            {
+                result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
+            }
+            return result;
+        }
+
+        private List<Bitmap> GrubCardsRectangles()
+        {
+            var result = new List<Bitmap>();
+            foreach (var rectangle in cardsRects)
             {
                 result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
             }
