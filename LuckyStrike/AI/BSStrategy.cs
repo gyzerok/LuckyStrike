@@ -64,44 +64,42 @@ namespace AI
 
         private Decision GetPreviousDecision(NonEmptySeat seat)
         {
-            AbstractSeat checkingSeat = seat.Right;
-            while (checkingSeat is EmptySeat)
-            {
-                if ((checkingSeat as NonEmptySeat).Player.Activity.Decision == Decision.BET)
-                {
-                    return Decision.FOLD;
-                }
+            var previousSeat = seat.RightNonEmpty;
 
-                checkingSeat = checkingSeat.Right;
+            if (previousSeat.Player.Activity.Decision == Decision.BLIND)
+            {
+                return Decision.FOLD;
             }
 
-            if (seat == checkingSeat)
+            if (seat == previousSeat)
             {
                 throw new Exception("Table is empty");
             }
 
-            return (checkingSeat as NonEmptySeat).Player.Activity.Decision;
+            return previousSeat.Player.Activity.Decision;
         }
 
-        private Position GetPosition(Game game)
+        private Position GetPosition(NonEmptySeat seat)
         {
-            if (this.state.Board.Dealer == this.state.Board.Players.Count - 1 ||
-                this.state.Board.Dealer == this.state.Board.Players.Count - 2)
-                return Position.Blind;
+            if (seat.LeftNonEmpty.Player.Activity.Decision == Decision.BLIND ||
+                seat.RightNonEmpty.Player.Activity.Decision == Decision.BLIND)
+            {
+                return Position.BLIND;
+            }
 
             var positions = new List<int>();
             positions.Add(2);
             positions.Add(3);
             positions.Add(2);
 
-            int minus = 9 - this.state.Board.Players.Count;
+            int minus = seat.Table.Seats.Count - seat.Table.ActiveGame.Players.Count;
             int i = 0;
             while (minus > 0)
             {
-                positions[0]--;
+                positions[i]--;
                 minus--;
 
-                if (positions[0] == 0) i++;
+                if (positions[i] == 0) i++;
             }
 
             i = this.state.Board.Dealer;

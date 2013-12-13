@@ -11,6 +11,7 @@ namespace Common.Domain
         public Table Table { get; private set; }
         public List<Card> Board { get; private set; }
         public List<AbstractPlayer> Players { get; private set; }
+        public int Dealer { get; private set; }
 
         public double Bank
         {
@@ -39,10 +40,11 @@ namespace Common.Domain
             }
         }
 
-        public Game(Table table, List<AbstractPlayer> players)
+        public Game(Table table, List<AbstractPlayer> players, int dealer)
         {
             this.Table = table;
             this.Players = players;
+            this.Dealer = dealer;
         }
 
         public void NextStreet(Card card)

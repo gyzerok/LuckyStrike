@@ -17,6 +17,7 @@ namespace Common.Domain
     public enum Decision
     {
         UNKNOWN = 1,
+        BLIND,
         BET,
         CALL,
         RAISE,

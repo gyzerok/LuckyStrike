@@ -8,8 +8,8 @@ namespace Common.Domain
 {
     public class EmptySeat : AbstractSeat
     {
-        public EmptySeat(AbstractSeat left, AbstractSeat right)
-            : base(left, right)
+        public EmptySeat(Table table, AbstractSeat left, AbstractSeat right)
+            : base(table, left, right)
         {
             
         }
