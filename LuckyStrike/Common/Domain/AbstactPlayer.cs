@@ -16,7 +16,7 @@ namespace Common.Domain
         {
             get
             {
-                this.History.Last();
+                return this.History.Last();
             }
         }
 
@@ -25,6 +25,6 @@ namespace Common.Domain
             this.Seats = new List<NonEmptySeat>();
         }
 
-        public abstract void Act(Activity activity = null);
+        public abstract void Act(int tableId, Activity activity = null);
     }
 }
