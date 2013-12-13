@@ -9,6 +9,15 @@ namespace Common.Domain
     public abstract class AbstractPlayer
     {
         public List<NonEmptySeat> Seats;
+        public List<Activity> History { get; private set; }
+
+        public Activity Activity
+        {
+            get
+            {
+                this.History.Last();
+            }
+        }
 
         public AbstractPlayer()
         {

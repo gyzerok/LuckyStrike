@@ -8,9 +8,19 @@ namespace Common.Domain
 {
     public class ArtificialPlayer : AbstractPlayer
     {
+        private AbstractStrategy strategy;
+        public List<Card> Hand { get; set; }
+
+        public ArtificialPlayer(AbstractStrategy strategy)
+        {
+            this.strategy = strategy;
+        }
+
         public override void Act(Activity activity = null)
         {
-            
+            var act = this.strategy.Process();
+
+            this.History.Add(act);
         }
     }
 }

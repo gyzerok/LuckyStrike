@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}</ProjectGuid>
+    <ProjectGuid>{097033C5-ABFF-46FD-86B4-BACA3403A8F4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
+    <RootNamespace>AI</RootNamespace>
+    <AssemblyName>AI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,20 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractStrategy.cs" />
-    <Compile Include="Domain\AbstactPlayer.cs" />
-    <Compile Include="Domain\AbstactSeat.cs" />
-    <Compile Include="Domain\Activity.cs" />
-    <Compile Include="Domain\ArtificialPlayer.cs" />
-    <Compile Include="Domain\Card.cs" />
-    <Compile Include="Domain\EmptySeat.cs" />
-    <Compile Include="Domain\Enums.cs" />
-    <Compile Include="Domain\Game.cs" />
-    <Compile Include="Domain\OnlinePlayer.cs" />
-    <Compile Include="Domain\NonEmptySeat.cs" />
-    <Compile Include="Domain\Table.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="BSStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{15be96eb-6bc7-465a-a6ac-eea2e9cfece4}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
