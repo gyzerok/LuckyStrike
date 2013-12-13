@@ -8,12 +8,14 @@ namespace Common.Domain
 {
     public class ArtificialPlayer : AbstractPlayer
     {
+        private AbstractOutput output;
         private AbstractStrategy strategy;
         public Hand Hand { get; set; }
 
-        public ArtificialPlayer(AbstractStrategy strategy)
+        public ArtificialPlayer(AbstractStrategy strategy, AbstractOutput output)
         {
             this.strategy = strategy;
+            this.output = output;
         }
 
         public override void Act(int tableId, Activity activity = null)
@@ -21,6 +23,8 @@ namespace Common.Domain
             var act = this.strategy.Process(this.Seats[tableId]);
 
             this.History.Add(act);
+
+            this.output.Emulate(act);
         }
     }
 }

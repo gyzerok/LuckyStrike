@@ -44,7 +44,7 @@ namespace Common.Domain
         {
             this.Table = table;
             this.Players = players;
-            this.Dealer = this.Players[dealer];
+            this.Dealer = (this.Table.Seats[dealer] as NonEmptySeat).Player;
         }
 
         public void NextStreet(Card card)

@@ -9,6 +9,7 @@ namespace Common.Domain
 {
     public abstract class AbstractPlayer
     {
+        // TODO make dictionary with table id
         public List<NonEmptySeat> Seats;
         public List<Activity> History { get; private set; }
 

@@ -43,6 +43,8 @@ namespace Common.Domain
         {
             var seat = new NonEmptySeat(this, this.Seats[id].Left, this.Seats[id].Right, player);
 
+            player.Seats.Add(seat);
+
             this.Seats[id] = seat;
         }
     }
