@@ -20,9 +20,30 @@ namespace Common.Domain
             }
         }
 
-        public Table(int id)
+        public Table(int id, int size)
         {
             this.id = id;
+            this.Seats = new List<AbstractSeat>();
+
+            AbstractSeat prevSeat = new EmptySeat(null, null);
+            for (int i = 1; i < size - 1; i++)
+            {
+                this.Seats.Add(prevSeat);
+                prevSeat = new EmptySeat(null, prevSeat);
+            }
+
+            while (prevSeat.Right.Left == null)
+            {
+                prevSeat.Right.Left = prevSeat;
+                prevSeat = prevSeat.Right;
+            }
+        }
+
+        public void SeatPlayer(int id, AbstractPlayer player)
+        {
+            var seat = new NonEmptySeat(this.Seats[id].Left, this.Seats[id].Right, player);
+
+            this.Seats[id] = seat;
         }
     }
 }

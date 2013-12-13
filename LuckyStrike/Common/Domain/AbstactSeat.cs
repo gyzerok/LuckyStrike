@@ -8,8 +8,8 @@ namespace Common.Domain
 {
     public abstract class AbstractSeat
     {
-        public AbstractSeat Left { get; private set; }
-        public AbstractSeat Right { get; private set; }
+        public AbstractSeat Left { get; set; }
+        public AbstractSeat Right { get; set; }
 
         public AbstractSeat(AbstractSeat left, AbstractSeat right)
         {

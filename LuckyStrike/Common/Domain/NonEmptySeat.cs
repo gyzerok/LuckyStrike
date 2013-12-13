@@ -8,9 +8,12 @@ namespace Common.Domain
 {
     public class NonEmptySeat : AbstractSeat
     {
-        public NonEmptySeat(AbstractSeat left, AbstractSeat right)
+        public AbstractPlayer Player { get; private set; }
+
+        public NonEmptySeat(AbstractSeat left, AbstractSeat right, AbstractPlayer player)
             : base(left, right)
         {
+            this.Player = player;
         }
     }
 }
