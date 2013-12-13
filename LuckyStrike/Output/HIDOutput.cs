@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using Common.Domain;
+using Common;
 
 namespace Output
 {

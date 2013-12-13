@@ -8,5 +8,9 @@ namespace Input
 {
     public class TestInterpreter : AbstractInterpreter
     {
+        public override void Interprete()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -10,6 +10,13 @@ namespace Common.Domain
     {
         public List<Card> Cards { get; private set; }
 
+        public Hand(Card card1, Card card2)
+        {
+            this.Cards = new List<Card>();
+            this.Cards.Add(card1);
+            this.Cards.Add(card2);
+        }
+
         public override string ToString()
         {
             string ret = "";

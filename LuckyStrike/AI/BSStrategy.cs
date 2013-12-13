@@ -13,15 +13,15 @@ namespace AI
     public class BSStrategy : AbstractStrategy
     {
         private Dictionary<List<string>, List<List<int>>> preflopTable;
-        private BSStrategy instance = null;
+        private static BSStrategy instance = null;
 
-        public BSStrategy Instance
+        public static BSStrategy Instance
         {
             get
             {
-                if (this.instance == null) this.instance = new BSStrategy();
+                if (instance == null) instance = new BSStrategy();
 
-                return this.instance;
+                return instance;
             }
         }
 

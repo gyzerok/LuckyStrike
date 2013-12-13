@@ -8,5 +8,9 @@ namespace Input
 {
     public class TestGrabber : AbstractGrubber
     {
+        public override AbstractData Grub()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

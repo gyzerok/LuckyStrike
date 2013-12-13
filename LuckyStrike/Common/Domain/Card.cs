@@ -21,31 +21,31 @@ namespace Common.Domain
         {
             switch (this.Value)
             {
-                case Value._2:
+                case CardValue._2:
                     return "2";
-                case Value._3:
+                case CardValue._3:
                     return "3";
-                case Value._4:
+                case CardValue._4:
                     return "4";
-                case Value._5:
+                case CardValue._5:
                     return "5";
-                case Value._6:
+                case CardValue._6:
                     return "6";
-                case Value._7:
+                case CardValue._7:
                     return "7";
-                case Value._8:
+                case CardValue._8:
                     return "8";
-                case Value._9:
+                case CardValue._9:
                     return "9";
-                case Value._T:
+                case CardValue._T:
                     return "T";
-                case Value._J:
+                case CardValue._J:
                     return "J";
-                case Value._Q:
+                case CardValue._Q:
                     return "Q";
-                case Value._K:
+                case CardValue._K:
                     return "K";
-                case Value._A:
+                case CardValue._A:
                     return "A";
                 default:
                     return "";
@@ -54,7 +54,7 @@ namespace Common.Domain
 
         public static Card FromString(string str)
         {
-            var card = new Card();
+            var card = new Card(CardValue._2, CardSuit.C);
 
             switch (str[0])
             {

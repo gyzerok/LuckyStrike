@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Input
+﻿namespace Input
 {
     public class ScreenInputFactory : InputFactory
     {
         public override AbstractData CreateData()
         {
-            return new ScreenData();
+            return new ScreenData(null,null,null,null);
         }
 
         public override AbstractGrubber CreateGrubber()
