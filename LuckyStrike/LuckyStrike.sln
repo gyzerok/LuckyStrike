@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuckyStrike", "LuckyStrike\LuckyStrike.csproj", "{9C547157-355F-4EE5-AA19-CA3C3E19611D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9C547157-355F-4EE5-AA19-CA3C3E19611D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C547157-355F-4EE5-AA19-CA3C3E19611D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C547157-355F-4EE5-AA19-CA3C3E19611D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C547157-355F-4EE5-AA19-CA3C3E19611D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BE96EB-6BC7-465A-A6AC-EEA2E9CFECE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
