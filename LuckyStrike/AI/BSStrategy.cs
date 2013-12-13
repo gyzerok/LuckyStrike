@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,15 +32,14 @@ namespace AI
 
         public override Activity Process(NonEmptySeat seat)
         {
-            var game = seat.Table.ActiveGame;
             var player = (seat.Player as ArtificialPlayer);
 
-            if (game.Street == Street.PREFLOP)
+            if (seat.Table.ActiveGame.Street == Street.PREFLOP)
             {
                 var subtable = this.GetSubtable(player.Hand);
 
                 var previousDecision = this.GetPreviousDecision(seat);
-                var position = this.GetPosition(game);
+                var position = this.GetPosition(seat);
 
                 var decision = subtable[(int) previousDecision][(int) position];
 
@@ -102,17 +102,25 @@ namespace AI
                 if (positions[i] == 0) i++;
             }
 
-            i = this.state.Board.Dealer;
-            while (positions[i] != 0)
-            {
-                if (i == 0) return (Position)(positions.Count - 1);
+            var checkingSeat = seat;
+            if (checkingSeat.Player == seat.Player) return Position.LATE;
 
-                positions[positions.Count - 1]--;
-                if (positions[positions.Count - 1] == 0) positions.RemoveAt(positions.Count - 1);
-                i = this.state.Board.RightOf(i);
+            int j = positions.Count - 1;
+            while (j > 0)
+            {
+                if (checkingSeat.Player == seat.Player)
+                    return (Position) j + 1;
+
+                positions[j]--;
+                if (positions[j] == 0) j--;
+
+                while (!seat.Table.ActiveGame.Players.Contains(checkingSeat.RightNonEmpty.Player))
+                {
+                    checkingSeat = checkingSeat.RightNonEmpty;
+                }
             }
 
-            return Position.Early;
+            throw new Exception("Position indetification fail");
         }
     }
 }
