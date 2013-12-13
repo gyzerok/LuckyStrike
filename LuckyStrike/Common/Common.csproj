@@ -48,6 +48,7 @@
     <Compile Include="Domain\EmptySeat.cs" />
     <Compile Include="Domain\Enums.cs" />
     <Compile Include="Domain\Game.cs" />
+    <Compile Include="Domain\Hand.cs" />
     <Compile Include="Domain\OnlinePlayer.cs" />
     <Compile Include="Domain\NonEmptySeat.cs" />
     <Compile Include="Domain\Table.cs" />

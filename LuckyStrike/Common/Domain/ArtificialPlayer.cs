@@ -9,7 +9,7 @@ namespace Common.Domain
     public class ArtificialPlayer : AbstractPlayer
     {
         private AbstractStrategy strategy;
-        public List<Card> Hand { get; set; }
+        public Hand Hand { get; set; }
 
         public ArtificialPlayer(AbstractStrategy strategy)
         {
