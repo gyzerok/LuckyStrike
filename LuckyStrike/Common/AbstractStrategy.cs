@@ -9,6 +9,6 @@ namespace Common
 {
     public abstract class AbstractStrategy
     {
-        public abstract Activity Process(Game game, NonEmptySeat seat);
+        public abstract Activity Process(NonEmptySeat seat);
     }
 }

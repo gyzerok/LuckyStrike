@@ -29,8 +29,9 @@ namespace AI
             
         }
 
-        public override Activity Process(Game game, NonEmptySeat seat)
+        public override Activity Process(NonEmptySeat seat)
         {
+            var game = seat.Table.ActiveGame;
             var player = (seat.Player as ArtificialPlayer);
 
             if (game.Street == Street.PREFLOP)
@@ -44,6 +45,8 @@ namespace AI
 
                 return new Activity((Decision)decision);
             }
+
+            return null;
         }
 
         private List<List<int>> GetSubtable(Hand hand)

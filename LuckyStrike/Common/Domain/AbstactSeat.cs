@@ -8,11 +8,13 @@ namespace Common.Domain
 {
     public abstract class AbstractSeat
     {
+        public Table Table { get; private set; }
         public AbstractSeat Left { get; set; }
         public AbstractSeat Right { get; set; }
 
-        public AbstractSeat(AbstractSeat left, AbstractSeat right)
+        public AbstractSeat(Table table, AbstractSeat left, AbstractSeat right)
         {
+            this.Table = table;
             this.Left = left;
             this.Right = Right;
         }

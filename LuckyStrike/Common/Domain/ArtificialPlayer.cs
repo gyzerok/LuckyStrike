@@ -16,9 +16,9 @@ namespace Common.Domain
             this.strategy = strategy;
         }
 
-        public override void Act(Activity activity = null)
+        public override void Act(int tableId, Activity activity = null)
         {
-            var act = this.strategy.Process();
+            var act = this.strategy.Process(this.Seats[tableId].Table.ActiveGame);
 
             this.History.Add(act);
         }
