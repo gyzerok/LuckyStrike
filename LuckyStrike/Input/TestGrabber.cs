@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Input
 {
-    public abstract class AbstractInterpreter
+    public class TestGrabber : AbstractGrubber
     {
-        public abstract void Interprete();
     }
 }

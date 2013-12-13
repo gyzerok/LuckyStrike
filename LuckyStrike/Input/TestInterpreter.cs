@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Input
 {
-    public abstract class AbstractInterpreter
+    public class TestInterpreter : AbstractInterpreter
     {
-        public abstract void Interprete();
     }
 }
