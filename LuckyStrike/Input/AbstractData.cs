@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Input
 {
-    public abstract class AbstractInterpreter
+    abstract public class AbstractData
     {
-        public abstract void Interprete();
+        public abstract void LoadConfig();
     }
 }
