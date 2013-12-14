@@ -19,7 +19,7 @@ namespace Input
         private ScreenGrubber grubber;
         private Dictionary<string, string> cards = new Dictionary<string, string>();
         private Table currenTable;
-        private int prevDealerPosition;
+        private int prevDealerPosition = 100;
         private Timer timer; 
 
         public ScreenInterpreter()
@@ -42,7 +42,7 @@ namespace Input
 
             var newDealerPos = this.InterpeteDealer(screenData);
 
-            if (newDealerPos != this.prevDealerPosition)
+            if ((newDealerPos != this.prevDealerPosition)||prevDealerPosition==100)
             {
                 this.SeatPlayers(this.IntepreteHands(screenData));
                 this.currenTable.Games.Add(new Game(this.currenTable, this.IntepreteHands(screenData).Values.ToList(), newDealerPos));

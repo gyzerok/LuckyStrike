@@ -126,7 +126,8 @@ namespace Input
             var result = new List<Bitmap>();
             foreach (var rectangle in betsRects)
             {
-                result.Add(new Bitmap(ScreenGrubber.DetectBet(ScreenGrubber.Crop(image,rectangle))));   
+                if (ScreenGrubber.DetectBet(ScreenGrubber.Crop(image,rectangle)) != null)
+                    result.Add(new Bitmap(ScreenGrubber.DetectBet(ScreenGrubber.Crop(image,rectangle))));   
             }
             return result;
         }
