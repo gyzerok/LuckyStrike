@@ -42,7 +42,7 @@ namespace Input
 
             var newDealerPos = this.InterpeteDealer(screenData);
 
-            if ((newDealerPos != this.prevDealerPosition)||prevDealerPosition==100)
+            if (newDealerPos != this.prevDealerPosition || prevDealerPosition == 100)
             {
                 this.SeatPlayers(this.IntepreteHands(screenData));
                 this.currenTable.Games.Add(new Game(this.currenTable, this.IntepreteHands(screenData).Values.ToList(), newDealerPos));
