@@ -24,13 +24,15 @@ namespace Common.Domain
         {
             this.id = id;
             this.Seats = new List<AbstractSeat>();
+            this.Games = new List<Game>();
 
             AbstractSeat prevSeat = new EmptySeat(this, null, null);
-            for (int i = 1; i < size - 1; i++)
+            for (int i = 1; i < size; i++)
             {
                 this.Seats.Add(prevSeat);
                 prevSeat = new EmptySeat(this, null, prevSeat);
             }
+            this.Seats.Add(prevSeat);
 
             this.Seats[0].Right = prevSeat;
 

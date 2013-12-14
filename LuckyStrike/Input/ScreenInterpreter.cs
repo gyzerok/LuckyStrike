@@ -27,7 +27,8 @@ namespace Input
             grubber = new ScreenGrubber();
             this.LoadCards();
             this.currenTable = new Table(0,9);
-            this.timer = new Timer(this.Timer_tick, null, 100, 100);
+            this.Timer_tick(this);
+            //this.timer = new Timer(this.Timer_tick, null, 100, 100);
         }
 
         public void Timer_tick(Object sender)
@@ -44,8 +45,10 @@ namespace Input
 
             if (newDealerPos != this.prevDealerPosition || prevDealerPosition == 100)
             {
-                this.SeatPlayers(this.IntepreteHands(screenData));
-                this.currenTable.Games.Add(new Game(this.currenTable, this.IntepreteHands(screenData).Values.ToList(), newDealerPos));
+                var activePlayers = this.IntepreteHands(screenData);   
+                this.SeatPlayers(activePlayers);
+                var debug = activePlayers.Values.ToList();
+                this.currenTable.Games.Add(new Game(this.currenTable, debug, newDealerPos));
                 prevDealerPosition = newDealerPos;
             }
 
@@ -141,6 +144,7 @@ namespace Input
             var activePlayers = new Dictionary<int,AbstractPlayer>();
             for (var i = 0; i < data.GetHandsBitmaps().Count; i++)
             {
+                var flag = false;
                 var targetBitmap = data.GetHandsBitmaps()[i];
                 for (var j = 0; j < targetBitmap.Height; j++)
                 {
@@ -148,9 +152,13 @@ namespace Input
                     {
                         if (targetBitmap.GetPixel(j,k) == Color.FromArgb(255, 160, 73, 70))
                         {
-                            activePlayers.Add(i, new OnlinePlayer());
+                            activePlayers.Add(i+1, new OnlinePlayer());
+                            flag = true;
+                            break;
                         }
                     }
+                    if (flag)
+                        break;
                 }
             }
             return activePlayers;
@@ -173,10 +181,11 @@ namespace Input
         private int InterpeteDealer(ScreenData data)
         {
             var dealerColor = Color.FromArgb(255, 169, 23, 13);
-            var flag = false;
+
             var ret = 0;
             for (var i = 0; i < data.GetDealersBitmaps().Count; i++)
             {
+                var flag = false;
                 var targetBitmap = data.GetDealersBitmaps()[i];
                 for (int j = 0; j < targetBitmap.Width; j++)
                 {
@@ -191,7 +200,7 @@ namespace Input
                     }
                     if (flag) break;
                 }
-                if (flag) break;
+                //if (flag) break;
             }
             return ret;
         }
