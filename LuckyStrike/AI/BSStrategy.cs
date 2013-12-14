@@ -33,7 +33,24 @@ namespace AI
 
         private void LoadConfig()
         {
-            var reader = new StreamReader("../../../preflop_table.txt")    
+            var baseDirectory = System.AppDomain.CurrentDomain.BaseDirectory;
+            var sr = new StreamReader(baseDirectory+"/../../../preflop_table.txt");
+            preflopTable = new Dictionary<List<string>, List<List<int>>>();
+            string line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                var actions = new List<int>();
+                var subTable = new List<List<int>>();
+                string tmpLine;
+                for (int i = 0; i < 3; i++)
+                {
+                    tmpLine = sr.ReadLine();
+                    actions = tmpLine.Split(' ').Select(n => int.Parse(n)).ToList();
+                    subTable.Add(actions);
+                    this.preflopTable.Add(line.Split(' ').ToList(), subTable);
+                }
+            }
+            sr.Close();
         }
 
         public override Activity Process(NonEmptySeat seat)
