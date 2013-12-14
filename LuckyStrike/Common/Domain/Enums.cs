@@ -19,9 +19,9 @@ namespace Common.Domain
         UNKNOWN = 1,
         BLIND,
         BET,
+        FOLD,
         CALL,
         RAISE,
-        FOLD
     }
 
     public enum Street

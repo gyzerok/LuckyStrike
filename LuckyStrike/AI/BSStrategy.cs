@@ -64,7 +64,7 @@ namespace AI
                 var previousDecision = this.GetPreviousDecision(seat);
                 var position = this.GetPosition(seat);
 
-                var decision = subtable[(int) previousDecision][(int) position];
+                var decision = subtable[((int)previousDecision) - 4][(int) position];
 
                 return new Activity((Decision)decision);
             }
