@@ -32,6 +32,8 @@ namespace Common.Domain
                 prevSeat = new EmptySeat(this, null, prevSeat);
             }
 
+            this.Seats[0].Right = prevSeat;
+
             while (prevSeat.Right.Left == null)
             {
                 prevSeat.Right.Left = prevSeat;
