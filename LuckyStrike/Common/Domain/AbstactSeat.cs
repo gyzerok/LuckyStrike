@@ -16,7 +16,7 @@ namespace Common.Domain
         {
             this.Table = table;
             this.Left = left;
-            this.Right = Right;
+            this.Right = right;
         }
     }
 }
