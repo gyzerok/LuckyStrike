@@ -33,7 +33,7 @@ namespace AI
 
         private void LoadConfig()
         {
-            var reader = new StreamReader("../../../preflop_table.txt")    
+            var reader = new StreamReader("../../../preflop_table.txt");
         }
 
         public override Activity Process(NonEmptySeat seat)
@@ -47,7 +47,7 @@ namespace AI
                 var previousDecision = this.GetPreviousDecision(seat);
                 var position = this.GetPosition(seat);
 
-                var decision = subtable[(int) previousDecision][(int) position];
+                var decision = subtable[((int)previousDecision) - 4][(int) position];
 
                 return new Activity((Decision)decision);
             }
