@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,12 @@ namespace AI
 
         private BSStrategy()
         {
-            
+            this.LoadConfig();
+        }
+
+        private void LoadConfig()
+        {
+            var reader = new StreamReader("../../../preflop_table.txt")    
         }
 
         public override Activity Process(NonEmptySeat seat)
@@ -120,7 +126,7 @@ namespace AI
                 }
             }
 
-            throw new Exception("Position indetification fail");
+            throw new Exception("Position identification fail");
         }
     }
 }

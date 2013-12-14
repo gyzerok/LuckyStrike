@@ -57,7 +57,7 @@ namespace Input
         private void LoadCards()
         {
             var result = new Dictionary<string, string>();
-            using (var fs = File.OpenRead("/../../../cards.cfg"))
+            using (var fs = File.OpenRead("../../../cards.cfg"))
             using (var reader = new BinaryReader(fs))
             {
                 // Get count.
