@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Input
 {
-    public abstract class AbstractGrubber
+    public abstract class AbstractGrabber
     {
         public abstract AbstractData Grub();
     }

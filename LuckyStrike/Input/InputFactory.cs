@@ -8,8 +8,7 @@ namespace Input
 {
     public abstract class InputFactory
     {
-        public abstract AbstractData CreateData();
-        public abstract AbstractGrubber CreateGrubber();
+        public abstract AbstractGrabber CreateGrubber();
         public abstract AbstractInterpreter CreateInterpreter();
     }
 }

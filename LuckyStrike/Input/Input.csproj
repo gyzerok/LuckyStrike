@@ -63,14 +63,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractData.cs" />
-    <Compile Include="AbstractGrubber.cs" />
+    <Compile Include="AbstractGrabber.cs" />
     <Compile Include="AbstractInterpreter.cs" />
     <Compile Include="DigitOCR.cs" />
     <Compile Include="InputFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenData.cs" />
     <Compile Include="ScreenInputFactory.cs" />
-    <Compile Include="ScreenGrubber.cs" />
+    <Compile Include="ScreenGrabber.cs" />
     <Compile Include="ScreenInterpreter.cs" />
     <Compile Include="TestGrabber.cs" />
     <Compile Include="TestInputFactory.cs" />

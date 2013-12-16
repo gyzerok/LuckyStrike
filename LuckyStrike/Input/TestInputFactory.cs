@@ -8,12 +8,7 @@ namespace Input
 {
     public class TestInputFactory : InputFactory 
     {
-        public override AbstractData CreateData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override AbstractGrubber CreateGrubber()
+        public override AbstractGrabber CreateGrubber()
         {
             return new TestGrabber();
         }

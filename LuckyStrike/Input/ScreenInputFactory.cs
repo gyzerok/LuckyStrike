@@ -2,19 +2,20 @@
 {
     public class ScreenInputFactory : InputFactory
     {
-        public override AbstractData CreateData()
+        public override AbstractGrabber CreateGrubber()
         {
-            return new ScreenData(null,null,null,null);
-        }
-
-        public override AbstractGrubber CreateGrubber()
-        {
-            return new ScreenGrubber();
+            return new ScreenGrabber();
         }
 
         public override AbstractInterpreter CreateInterpreter()
         {
             return new ScreenInterpreter();
+        }
+
+        public ScreenInputFactory()
+        {
+            this.CreateGrubber();
+            this.CreateInterpreter();
         }
     }
 }

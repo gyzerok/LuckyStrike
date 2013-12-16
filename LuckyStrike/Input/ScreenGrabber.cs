@@ -6,14 +6,52 @@ using System.Windows.Forms;
 
 namespace Input
 {
-    public class ScreenGrubber : AbstractGrubber
+    public class ScreenGrabber : AbstractGrabber
     {
         private Bitmap image;
 
-        private Color readyColor = Color.FromArgb(255, 178, 195, 205);
-        private Point readyPoint = new Point(729, 672);
+        private readonly Color readyColor = Color.FromArgb(255, 178, 195, 205);
+        private readonly Color _sitOutColor = Color.FromArgb(255, 192, 192, 192);
+        private readonly Point readyPoint = new Point(729, 672);
 
-        private readonly List<Rectangle> cardsRects = new List<Rectangle>()
+        private readonly List<Rectangle> _nameRectangles = new List<Rectangle>()
+        {
+            new Rectangle(468,457,112,19),
+            new Rectangle(199,378,112,19),
+            new Rectangle(194,143,112,19),
+            new Rectangle(373,73,112,19),
+            new Rectangle(891,73,112,19),
+            new Rectangle(1065,143,112,19),
+            new Rectangle(1055,378,112,19),
+            new Rectangle(795,457,112,19),
+        };
+
+        private readonly List<Rectangle> _betsRectangles = new List<Rectangle>()
+        {
+            new Rectangle(614,391,105,65),
+            new Rectangle(455,400,105,65),
+            new Rectangle(379,316,105,65),
+            new Rectangle(402,230,105,65),
+            new Rectangle(527,194,105,65),
+            new Rectangle(749,190,105,65),
+            new Rectangle(831,234,105,65),
+            new Rectangle(877,307,105,65),
+            new Rectangle(763,395,105,65),
+        };
+
+        private readonly List<Point> _sittingOutPixels = new List<Point>()
+        {
+            new Point(497,482),
+            new Point(228,404),
+            new Point(223,169),
+            new Point(403,100),
+            new Point(920,101),
+            new Point(1093,169),
+            new Point(1085,402),
+            new Point(824,482),
+        };
+       
+        private readonly List<Rectangle> _cardsRectangles = new List<Rectangle>()
         {
             new Rectangle(650, 460, 15, 40), //hand1
             new Rectangle(671, 465, 15, 40), //hand2
@@ -24,20 +62,7 @@ namespace Input
             new Rectangle(793, 227, 15, 40), //river
         };
 
-        private readonly List<Rectangle> betsRects = new List<Rectangle>()
-        {
-            new Rectangle(614,391,105,35),
-            new Rectangle(455,400,105,35),
-            new Rectangle(379,316,105,35),
-            new Rectangle(402,230,105,35),
-            new Rectangle(527,194,105,35),
-            new Rectangle(749,190,105,35),
-            new Rectangle(831,234,105,35),
-            new Rectangle(877,307,105,35),
-            new Rectangle(763,395,105,35),
-        };
-
-        private readonly List<Rectangle> handsRects = new List<Rectangle>()
+        private readonly List<Rectangle> _playersRectangles = new List<Rectangle>()
         {
             new Rectangle(398,379,30,30),
             new Rectangle(310,286,30,30),
@@ -49,7 +74,7 @@ namespace Input
             new Rectangle(923,380,30,30),
         };
 
-        private readonly List<Rectangle> dealerRects = new List<Rectangle>()
+        private readonly List<Rectangle> _dealerRectangles = new List<Rectangle>()
         {
             new Rectangle(661,425,30,25),
             new Rectangle(475,427,30,25),
@@ -64,15 +89,15 @@ namespace Input
 
         public override AbstractData Grub()
         {
-            this.image = ScreenGrubber.Snapshot();
+            this.image = ScreenGrabber.Snapshot();
             this.GrubBetsRectangles();
             return new ScreenData(this.GrubHandsRectangles(), this.GrubCardsRectangles(), this.GrubDealerRectangles(),
-                this.GrubBetsRectangles());
+                this.GrubBetsRectangles(), this.GrubActivePlayers());
         }
 
         public bool IsReady()
         {
-            this.image = ScreenGrubber.Snapshot();
+            this.image = ScreenGrabber.Snapshot();
             if (image.GetPixel(this.readyPoint.X, this.readyPoint.Y) == this.readyColor)
                 return true;
             return false;
@@ -124,10 +149,10 @@ namespace Input
         private List<Bitmap> GrubBetsRectangles()
         {
             var result = new List<Bitmap>();
-            foreach (var rectangle in betsRects)
+            foreach (var rectangle in _betsRectangles)
             {
-                if (ScreenGrubber.DetectBet(ScreenGrubber.Crop(image,rectangle)) != null)
-                    result.Add(new Bitmap(ScreenGrubber.DetectBet(ScreenGrubber.Crop(image,rectangle))));   
+                if (ScreenGrabber.DetectBet(ScreenGrabber.Crop(image,rectangle)) != null)
+                    result.Add(new Bitmap(ScreenGrabber.DetectBet(ScreenGrabber.Crop(image,rectangle))));   
             }
             return result;
         }
@@ -135,9 +160,9 @@ namespace Input
         private List<Bitmap> GrubHandsRectangles()
         {
             var result = new List<Bitmap>();
-            foreach (var rectangle in handsRects)
+            foreach (var rectangle in _playersRectangles)
             {
-                result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
+                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
             }
             return result;
         }
@@ -145,9 +170,9 @@ namespace Input
         private List<Bitmap> GrubDealerRectangles()
         {
             var result = new List<Bitmap>();
-            foreach (var rectangle in dealerRects)
+            foreach (var rectangle in _dealerRectangles)
             {
-                result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
+                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
             }
             return result;
         }
@@ -155,9 +180,41 @@ namespace Input
         private List<Bitmap> GrubCardsRectangles()
         {
             var result = new List<Bitmap>();
-            foreach (var rectangle in cardsRects)
+            foreach (var rectangle in _cardsRectangles)
             {
-                result.Add(new Bitmap(ScreenGrubber.Crop(image,rectangle)));
+                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
+            }
+            return result;
+        }
+
+        public List<int> GrubActivePlayers()
+        {
+            var result = new List<int>();
+            for (var i = 0; i < this._nameRectangles.Count; i++)
+            {
+                var hasName = false;
+                var value = this._nameRectangles[i];
+                var bmp = Crop(this.image, value);
+
+                for (var j = 0; j < value.Height; j++)
+                {
+                    for (var k = 0; k < value.Width; k++)
+                    {
+                        if (bmp.GetPixel(k, j) == this._sitOutColor)
+                        {
+                            hasName = true;
+                            break;
+                        }
+                    }
+                    if (hasName)
+                        break;
+                }
+                if (hasName)
+                {
+                    var point = this._sittingOutPixels[i];
+                    if (this.image.GetPixel(point.X, point.Y) != this._sitOutColor)
+                        result.Add(i + 1);
+                }
             }
             return result;
         }
