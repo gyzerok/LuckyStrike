@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 
@@ -16,12 +15,125 @@ namespace Input
 {
     public class ScreenInterpreter : AbstractInterpreter
     {
-        public override void Interprete()
+        private Dictionary<string, string> cards = new Dictionary<string, string>();
+        private int previousDealerPosition = 100;
+        private Hand previousHand = null;
+        private Table currentTable;
+        private ScreenGrabber grubber;
+
+        public ScreenInterpreter()
         {
-            throw new NotImplementedException();
+            this.LoadCards();
+            this.grubber = new ScreenGrabber();
         }
 
-        
+        public override void Interprete()
+        {
+            //    var screenData = (ScreenData)grubber.Grub();
+
+            //    var newDealerPos = this.InterpeteDealer(screenData);
+
+            //    if (newDealerPos != this.prevDealerPosition || prevDealerPosition == 100)
+            //    {
+            //        var activePlayers = this.IntepreteHands(screenData);   
+            //        this.SeatPlayers(activePlayers, newDealerPos);
+            //        var debug = activePlayers.Values.ToList();
+            //        this.currenTable.Games.Add(new Game(this.currenTable, debug, newDealerPos));
+            //        prevDealerPosition = newDealerPos;
+            //    }
+
+            //    this.formListOfActivities(this.prevDealerPosition, this.InterpreteBets(screenData));
+
+            //    (this.currenTable.Seats[0] as NonEmptySeat).Player.Act(0);
+
+            var data = (ScreenData) grubber.Grub();
+
+            var activePlayers = grubber.GrubActivePlayers();
+            activePlayers.Insert(0,0);
+
+            var newDealerPosition = this.GetDealerPosition(data.GetDealersBitmaps());
+            var newHand = this.GetPlayersHand(data.GetCardsBitmaps());
+
+            //New hand
+            if (newHand != this.previousHand && newDealerPosition != this.previousDealerPosition)
+            {
+                for (var i = 0; i < activePlayers.Count; i++)
+                {
+                     
+                }
+            }
+        }
+
+        private int GetDealerPosition(List<Bitmap> dealerBitmaps)
+        {
+            var dealerColor = Color.FromArgb(255, 169, 23, 13);
+            var ret = 0;
+
+            for (var i = 0; i < dealerBitmaps.Count; i++)
+            {
+                var flag = false;
+                var targetBitmap = dealerBitmaps[i];
+                for (var j = 0; j < targetBitmap.Width; j++)
+                {
+                    for (var k = 0; k < targetBitmap.Height; k++)
+                    {
+                        if (targetBitmap.GetPixel(j, k) == dealerColor)
+                        {
+                            ret = i;
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) break;
+                }
+            }
+            return ret;
+        }
+
+        private Hand GetPlayersHand(List<Bitmap> bmps)
+        {
+        //    var hero = (ArtificialPlayer)currenTable.ActiveGame.Players[0];
+            return new Hand(Card.FromString(cards[GetHash(bmps[0])]), Card.FromString(cards[GetHash(bmps[1])]));
+        }
+
+        private void LoadCards()
+        {
+            var result = new Dictionary<string, string>();
+            using (var fs = File.OpenRead("../../../cards.cfg"))
+            using (var reader = new BinaryReader(fs))
+            {
+                // Get count.
+                var count = reader.ReadInt32();
+                // Read in all pairs.
+                for (var i = 0; i < count; i++)
+                {
+                    var key = reader.ReadString();
+                    var value = reader.ReadString();
+                    result.Add(key, value);
+                }
+            }
+            cards = result;
+        }
+
+        private static string GetHash(Bitmap image)
+        {
+            // get the bytes from the image
+            byte[] bytes = null;
+            using (var ms = new MemoryStream())
+            {
+                image.Save(ms, ImageFormat.Bmp); // gif for example
+                bytes = ms.ToArray();
+            }
+            // hash the bytes
+            var md5 = new MD5CryptoServiceProvider();
+            byte[] hash = md5.ComputeHash(bytes);
+            var temp = "";
+            foreach (byte value in hash)
+            {
+                temp += value.ToString();
+            }
+            return temp;
+        }
     }
 }
 
@@ -48,41 +160,7 @@ namespace Input
 
         //public override void Interprete()
         //{
-        //    var screenData = (ScreenData)grubber.Grub();
-
-        //    var newDealerPos = this.InterpeteDealer(screenData);
-
-        //    if (newDealerPos != this.prevDealerPosition || prevDealerPosition == 100)
-        //    {
-        //        var activePlayers = this.IntepreteHands(screenData);   
-        //        this.SeatPlayers(activePlayers, newDealerPos);
-        //        var debug = activePlayers.Values.ToList();
-        //        this.currenTable.Games.Add(new Game(this.currenTable, debug, newDealerPos));
-        //        prevDealerPosition = newDealerPos;
-        //    }
-
-        //    this.formListOfActivities(this.prevDealerPosition, this.InterpreteBets(screenData));
-    
-        //    (this.currenTable.Seats[0] as NonEmptySeat).Player.Act(0);
-        //}
-
-        //private void LoadCards()
-        //{
-        //    var result = new Dictionary<string, string>();
-        //    using (var fs = File.OpenRead("../../../cards.cfg"))
-        //    using (var reader = new BinaryReader(fs))
-        //    {
-        //        // Get count.
-        //        var count = reader.ReadInt32();
-        //        // Read in all pairs.
-        //        for (var i = 0; i < count; i++)
-        //        {
-        //            var key = reader.ReadString();
-        //            var value = reader.ReadString();
-        //            result.Add(key, value);
-        //        }
-        //    }
-        //    cards = result;
+        
         //}
 
         //private void SeatPlayers(Dictionary<int, AbstractPlayer> players, int dealerPosition)
@@ -137,24 +215,7 @@ namespace Input
 
         //}
 
-        //private static string GetHash(Bitmap image)
-        //{
-        //    // get the bytes from the image
-        //    byte[] bytes = null;
-        //    using (var ms = new MemoryStream())
-        //    {
-        //        image.Save(ms, ImageFormat.Bmp); // gif for example
-        //        bytes = ms.ToArray();
-        //    }
-        //    // hash the bytes
-        //    var md5 = new MD5CryptoServiceProvider();
-        //    byte[] hash = md5.ComputeHash(bytes);
-        //    var temp = "";
-        //    foreach (byte value in hash)
-        //    {
-        //        temp += value.ToString();
-        //    }
-        //    return temp;
+        
         //}
 
         //private Dictionary<int, AbstractPlayer> IntepreteHands(ScreenData data)
