@@ -137,6 +137,7 @@ namespace Input
                     return ret;
 
                 ret.Add(Card.FromString(bmps[i].Hash));
+                i++;
             }
 
             return ret;
