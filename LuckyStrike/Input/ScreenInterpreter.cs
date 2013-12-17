@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -53,15 +54,45 @@ namespace Input
 
             var newDealerPosition = this.GetDealerPosition(data.GetDealersBitmaps());
             var newHand = this.GetPlayersHand(data.GetCardsBitmaps());
-
             //New hand
-            if (newHand != this.previousHand && newDealerPosition != this.previousDealerPosition)
+            if (this.IsNewHand(newDealerPosition, newHand))
             {
-                for (var i = 0; i < activePlayers.Count; i++)
+                var i = newDealerPosition;
+                var currentPlayer = 0;
+                while (i < currentTable.Seats.Count)
                 {
-                     
+                    if ()   
                 }
             }
+            else
+            {
+                
+            }
+        }
+
+        private bool PlayerHasCards(List<int>)
+        {
+            return true;
+        }
+
+        private bool RectangleHasColor(Color color, Bitmap bmp)
+        {
+            for (var i = 0; i < bmp.Height; i++)
+                for (var j = 0; j < bmp.Width; j++)
+                    if (bmp.GetPixel(i, j) == color)
+                        return true;
+         
+            return false;
+        }
+
+        private int GetNextPlayerIndex(int currentIndex, int tableSize)
+        {
+            return (currentIndex + 1) % tableSize;
+        }
+
+        private bool IsNewHand(int newDealerPosition, Hand currentHand)
+        {
+            return (currentHand != this.previousHand && newDealerPosition != this.previousDealerPosition);
         }
 
         private int GetDealerPosition(List<Bitmap> dealerBitmaps)
