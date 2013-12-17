@@ -8,7 +8,7 @@ namespace Input
 {
     public class ScreenGrabber : AbstractGrabber
     {
-        private Bitmap image;
+        private BitmapExt snapshot;
 
         private readonly Color readyColor = Color.FromArgb(255, 178, 195, 205);
         private readonly Color _sitOutColor = Color.FromArgb(255, 192, 192, 192);
@@ -87,132 +87,73 @@ namespace Input
             new Rectangle(874,428,30,25),
         };
 
-        public override AbstractData Grub()
+        public override AbstractData Grab()
         {
-            this.image = ScreenGrabber.Snapshot();
-            this.GrubBetsRectangles();
-            return new ScreenData(this.GrubHandsRectangles(), this.GrubCardsRectangles(), this.GrubDealerRectangles(),
-                this.GrubBetsRectangles(), this.GrubActivePlayers());
+            return new ScreenData(
+                this.GrabHandsRectangles(), 
+                this.GrabCardsRectangles(), 
+                this.GrabDealerRectangles(),
+                this.GrabBetsRectangles(), 
+                this.GrubActivePlayers()
+            );
         }
 
         public bool IsReady()
         {
-            this.image = ScreenGrabber.Snapshot();
-            if (image.GetPixel(this.readyPoint.X, this.readyPoint.Y) == this.readyColor)
+            this.snapshot = BitmapExt.FromScreen();
+
+            if (snapshot.GetPixel(this.readyPoint.X, this.readyPoint.Y) == this.readyColor)
                 return true;
+
             return false;
         }
 
-        public static Bitmap Snapshot()
+        private List<BitmapExt> GrabBetsRectangles()
         {
-            var image = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-            var g = Graphics.FromImage(image as Image);
-            g.CopyFromScreen(0, 0, 0, 0, image.Size);
-            return image;
-        }
+            var result = new List<BitmapExt>();
 
-        public static Bitmap Crop(Bitmap source, Rectangle rect)
-        {
-            return source.Clone(rect, PixelFormat.DontCare);
-        }
-
-        public static Bitmap DetectBet(Bitmap image)
-        {
-            var minX = image.Width - 1;
-            var maxX = 0;
-            var minY = image.Height - 1;
-            var maxY = 0;
-            for (var i = 0; i < image.Height; i++)
-            {
-                for (var j = 0; j < image.Width; j++)
-                {
-                    if (image.GetPixel(j, i) == Color.FromArgb(255, 255, 246, 207))
-                    {
-                        minX = Math.Min(minX, j);
-                        maxX = Math.Max(maxX, j);
-                        minY = Math.Min(minY, i);
-                        maxY = Math.Max(maxY, i);
-                    }
-                }
-            }
-            if (minX < maxX)
-            {
-                minX--;
-                minY--;
-                maxY++;
-                maxX++;
-                return image.Clone(new Rectangle(minX, minY, maxX - minX, maxY - minY), PixelFormat.DontCare);
-            }
-            return null;
-        }
-
-        private List<Bitmap> GrubBetsRectangles()
-        {
-            var result = new List<Bitmap>();
             foreach (var rectangle in _betsRectangles)
             {
-                if (ScreenGrabber.DetectBet(ScreenGrabber.Crop(image,rectangle)) != null)
-                    result.Add(new Bitmap(ScreenGrabber.DetectBet(ScreenGrabber.Crop(image,rectangle))));   
+                // Getting apoximate bet rect
+                var croppedBmp = this.snapshot.Crop(rectangle);
+                // Geting accurate bet text rect
+                croppedBmp = croppedBmp.Crop(Color.FromArgb(255, 255, 246, 207));
+
+                if (croppedBmp != null)
+                    result.Add(croppedBmp);   
             }
+
             return result;
         }
 
-        private List<Bitmap> GrubHandsRectangles()
+        private List<BitmapExt> GrabHandsRectangles()
         {
-            var result = new List<Bitmap>();
-            foreach (var rectangle in _playersRectangles)
-            {
-                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
-            }
-            return result;
+            return this.snapshot.Crop(this._playersRectangles);
         }
 
-        private List<Bitmap> GrubDealerRectangles()
+        private List<BitmapExt> GrabDealerRectangles()
         {
-            var result = new List<Bitmap>();
-            foreach (var rectangle in _dealerRectangles)
-            {
-                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
-            }
-            return result;
+            return this.snapshot.Crop(this._dealerRectangles);
         }
 
-        private List<Bitmap> GrubCardsRectangles()
+        private List<BitmapExt> GrabCardsRectangles()
         {
-            var result = new List<Bitmap>();
-            foreach (var rectangle in _cardsRectangles)
-            {
-                result.Add(new Bitmap(ScreenGrabber.Crop(image,rectangle)));
-            }
-            return result;
+            return this.snapshot.Crop(this._cardsRectangles);
         }
 
         public List<int> GrubActivePlayers()
         {
             var result = new List<int>();
+
             for (var i = 0; i < this._nameRectangles.Count; i++)
             {
-                var hasName = false;
-                var value = this._nameRectangles[i];
-                var bmp = Crop(this.image, value);
+                var bmp = this.snapshot.Crop(this._nameRectangles[i]);
+                var hasName = bmp.HasColor(Color.FromArgb(255, 192, 192, 192)); ;
 
-                for (var j = 0; j < value.Height; j++)
-                {
-                    for (var k = 0; k < value.Width; k++)
-                    {
-                        if (bmp.GetPixel(k, j) == this._sitOutColor)
-                        {
-                            hasName = true;
-                            break;
-                        }
-                    }
-                    if (hasName)
-                        break;
-                }
                 if (hasName)
                 {
                     var point = this._sittingOutPixels[i];
-                    if (this.image.GetPixel(point.X, point.Y) != this._sitOutColor)
+                    if (this.snapshot.GetPixel(point.X, point.Y) != this._sitOutColor)
                         result.Add(i + 1);
                 }
             }

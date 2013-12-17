@@ -20,40 +20,35 @@ namespace Input
         private int previousDealerPosition = 100;
         private Hand previousHand = null;
         private Table currentTable;
-        private ScreenGrabber grubber;
+        private ScreenGrabber grabber;
 
         public ScreenInterpreter()
         {
             this.LoadCards();
-            this.grubber = new ScreenGrabber();
+
+            this.grabber = new ScreenGrabber();
         }
 
         public override void Interprete()
         {
-            //    var screenData = (ScreenData)grubber.Grub();
+            var data = (ScreenData) grabber.Grab();
+            var newDealerPosition = this.GetDealerPosition(data.GetDealersBitmaps());
+            var newHand = this.GetHeroHand(data.GetCardsBitmaps());
 
-            //    var newDealerPos = this.InterpeteDealer(screenData);
+            Game game;
+            if (this.IsNewHand(newDealerPosition, newHand))
+                game = new Game();
+            else
+                game = this.currentTable.ActiveGame;
 
-            //    if (newDealerPos != this.prevDealerPosition || prevDealerPosition == 100)
-            //    {
-            //        var activePlayers = this.IntepreteHands(screenData);   
-            //        this.SeatPlayers(activePlayers, newDealerPos);
-            //        var debug = activePlayers.Values.ToList();
-            //        this.currenTable.Games.Add(new Game(this.currenTable, debug, newDealerPos));
-            //        prevDealerPosition = newDealerPos;
-            //    }
+            var boardCards = this.GetBoardCards(data.GetCardsBitmaps());
+            game.NextStreet(boardCards);
 
-            //    this.formListOfActivities(this.prevDealerPosition, this.InterpreteBets(screenData));
-
-            //    (this.currenTable.Seats[0] as NonEmptySeat).Player.Act(0);
-
-            var data = (ScreenData) grubber.Grub();
+            
 
             var activePlayers = grubber.GrubActivePlayers();
             activePlayers.Insert(0,0);
 
-            var newDealerPosition = this.GetDealerPosition(data.GetDealersBitmaps());
-            var newHand = this.GetPlayersHand(data.GetCardsBitmaps());
             //New hand
             if (this.IsNewHand(newDealerPosition, newHand))
             {
@@ -95,36 +90,21 @@ namespace Input
             return (currentHand != this.previousHand && newDealerPosition != this.previousDealerPosition);
         }
 
-        private int GetDealerPosition(List<Bitmap> dealerBitmaps)
+        private int GetDealerPosition(List<BitmapExt> dealerBitmaps)
         {
             var dealerColor = Color.FromArgb(255, 169, 23, 13);
-            var ret = 0;
 
             for (var i = 0; i < dealerBitmaps.Count; i++)
-            {
-                var flag = false;
-                var targetBitmap = dealerBitmaps[i];
-                for (var j = 0; j < targetBitmap.Width; j++)
-                {
-                    for (var k = 0; k < targetBitmap.Height; k++)
-                    {
-                        if (targetBitmap.GetPixel(j, k) == dealerColor)
-                        {
-                            ret = i;
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (flag) break;
-                }
-            }
-            return ret;
+                if (dealerBitmaps[i].HasColor(dealerColor))
+                    return i;
         }
 
-        private Hand GetPlayersHand(List<Bitmap> bmps)
+        private Hand GetHeroHand(List<BitmapExt> bmps)
         {
-        //    var hero = (ArtificialPlayer)currenTable.ActiveGame.Players[0];
-            return new Hand(Card.FromString(cards[GetHash(bmps[0])]), Card.FromString(cards[GetHash(bmps[1])]));
+            return new Hand(
+                Card.FromString(cards[bmps[0].Hash]), 
+                Card.FromString(cards[bmps[1].Hash])
+            );
         }
 
         private void LoadCards()
@@ -146,24 +126,20 @@ namespace Input
             cards = result;
         }
 
-        private static string GetHash(Bitmap image)
+        private List<Card> GetBoardCards(List<BitmapExt> bmps)
         {
-            // get the bytes from the image
-            byte[] bytes = null;
-            using (var ms = new MemoryStream())
+            var ret = new List<Card>();
+
+            var i = 2;
+            while (i < bmps.Count)
             {
-                image.Save(ms, ImageFormat.Bmp); // gif for example
-                bytes = ms.ToArray();
+                if (! this.cards.ContainsKey(bmps[i].Hash))
+                    return ret;
+
+                ret.Add(Card.FromString(bmps[i].Hash));
             }
-            // hash the bytes
-            var md5 = new MD5CryptoServiceProvider();
-            byte[] hash = md5.ComputeHash(bytes);
-            var temp = "";
-            foreach (byte value in hash)
-            {
-                temp += value.ToString();
-            }
-            return temp;
+
+            return ret;
         }
     }
 }

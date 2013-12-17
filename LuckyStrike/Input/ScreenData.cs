@@ -11,13 +11,13 @@ namespace Input
 {
     public class ScreenData : AbstractData
     {
-        private List<Bitmap> playersBitmaps;
-        private List<Bitmap> cardsBitmaps;
-        private List<Bitmap> dealersBitmaps;
-        private List<Bitmap> betsBitmaps;
-        private List<int> activePlayers; 
- 
-        public ScreenData(List<Bitmap> players, List<Bitmap> cards, List<Bitmap> dealers, List<Bitmap> bets, List<int> activePlayers )
+        private List<BitmapExt> playersBitmaps;
+        private List<BitmapExt> cardsBitmaps;
+        private List<BitmapExt> dealersBitmaps;
+        private List<BitmapExt> betsBitmaps;
+        private List<int> activePlayers;
+
+        public ScreenData(List<BitmapExt> players, List<BitmapExt> cards, List<BitmapExt> dealers, List<BitmapExt> bets, List<int> activePlayers)
         {
             this.playersBitmaps = players;
             this.cardsBitmaps = cards;
@@ -31,22 +31,22 @@ namespace Input
             return this.activePlayers;
         }
 
-        public List<Bitmap> GetPlayersBitmaps()
+        public List<BitmapExt> GetPlayersBitmaps()
         {
             return this.playersBitmaps;
         }
 
-        public List<Bitmap> GetCardsBitmaps()
+        public List<BitmapExt> GetCardsBitmaps()
         {
             return this.cardsBitmaps;
         }
 
-        public List<Bitmap> GetDealersBitmaps()
+        public List<BitmapExt> GetDealersBitmaps()
         {
             return this.dealersBitmaps;
         }
 
-        public List<Bitmap> GetBetssBitmaps()
+        public List<BitmapExt> GetBetssBitmaps()
         {
             return this.betsBitmaps;
         }

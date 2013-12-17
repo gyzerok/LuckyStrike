@@ -8,6 +8,6 @@ namespace Input
 {
     public abstract class AbstractGrabber
     {
-        public abstract AbstractData Grub();
+        public abstract AbstractData Grab();
     }
 }
