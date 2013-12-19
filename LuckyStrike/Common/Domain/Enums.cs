@@ -22,6 +22,7 @@ namespace Common.Domain
         FOLD,
         CALL,
         RAISE,
+        CHECK,
     }
 
     public enum Street

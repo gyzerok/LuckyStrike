@@ -56,7 +56,7 @@ namespace Common.Domain
                 prevSeat = prevSeat.Right;
             }
 
-            this.SeatIn(0, new ArtificialPlayer(strategy, output));
+            this.SitIn(0, new ArtificialPlayer(strategy, output));
         }
 
         public void NewHand(int dealer)
@@ -70,7 +70,7 @@ namespace Common.Domain
             }
         }
 
-        public void SeatIn(int id, AbstractPlayer player)
+        public void SitIn(int id, AbstractPlayer player)
         {
             var seat = new NonEmptySeat(this, this.Seats[id].Left, this.Seats[id].Right, player);
 

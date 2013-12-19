@@ -46,7 +46,7 @@ namespace Input
             return this.dealersBitmaps;
         }
 
-        public List<BitmapExt> GetBetssBitmaps()
+        public List<BitmapExt> GetBetsBitmaps()
         {
             return this.betsBitmaps;
         }

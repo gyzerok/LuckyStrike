@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
 using System.IO;
-using System.Security.Cryptography;
-using System.Threading;
 
-using Common.Domain;
-using Common;
 using AI;
+using Common.Domain;
 using Output;
 
 namespace Input
@@ -21,65 +16,125 @@ namespace Input
         private Hand previousHand = null;
         private Table currentTable;
         private ScreenGrabber grabber;
+        private int prevCardCount = 0;
+        private bool betOrRaise = false;
+        private double betValue = 0.02;
+
+
+        private List<int> previousPlayers;
+        private List<int> foldedPlayers; 
 
         public ScreenInterpreter()
         {
             this.LoadCards();
-
             this.grabber = new ScreenGrabber();
+            this.currentTable = new Table(0, 9, BSStrategy.Instance, new HIDOutput());
+            this.previousPlayers = new List<int>(this.currentTable.Size);
+            this.foldedPlayers = new List<int>(this.currentTable.Size);
+            
         }
 
         public override void Interprete()
         {
-            var data = (ScreenData) grabber.Grab();
+            var data = (ScreenData)grabber.Grab();
+
             var newDealerPosition = this.GetDealerPosition(data.GetDealersBitmaps());
+
             var newHand = this.GetHeroHand(data.GetCardsBitmaps());
 
-            Game game;
-            if (this.IsNewHand(newDealerPosition, newHand))
-                game = new Game();
-            else
-                game = this.currentTable.ActiveGame;
-
-            var boardCards = this.GetBoardCards(data.GetCardsBitmaps());
-            game.NextStreet(boardCards);
-
-            
-
-            var activePlayers = grubber.GrubActivePlayers();
-            activePlayers.Insert(0,0);
-
-            //New hand
-            if (this.IsNewHand(newDealerPosition, newHand))
+            if (IsNewHand(newDealerPosition, newHand))
             {
-                var i = newDealerPosition;
-                var currentPlayer = 0;
-                while (i < currentTable.Seats.Count)
+                //form.Clear();
+                this.SitPlayers(this.previousPlayers, data.GetActivePlayers());
+                currentTable.NewHand(newDealerPosition);
+                (currentTable.Seats[0] as NonEmptySeat).Hand = newHand;
+
+                this.prevCardCount = 0;
+
+                //form.Show("Dealer position is: " + newDealerPosition.ToString());
+                //form.Show("Hero hand: " + newHand[0] + ' ' + newHand[1]);
+            }
+
+            var newCards = this.GetBoardCards(data.GetCardsBitmaps());
+
+            if (newCards.Count != prevCardCount)
+            {
+            //    var temp = "";
+            //    foreach (var str in newCards)
+            //    {
+            //        temp += cards[str] + ' ';
+            //    }
+            //    form.Show("Board: " + temp);
+                prevCardCount = newCards.Count;
+            }
+
+            var activePlayers = this.GetActivePlayers(data.GetActivePlayers());
+            var startingIndex = 0;
+            var dealerRelativePosition = activePlayers.IndexOf(newDealerPosition);
+            var blind = (0 - dealerRelativePosition == -activePlayers.Count + 1 || 0 - dealerRelativePosition == -activePlayers.Count + 2)
+
+                ? true
+                : false;
+
+            if ((!IsNewHand(newDealerPosition, newHand) && newCards.Count == prevCardCount) || blind)
+            {
+                startingIndex = 0;
+            }
+            else
+            {
+                startingIndex = newDealerPosition;
+            }
+
+            //form.Show("Iterating from: " + startingIndex.ToString());
+
+            while (startingIndex < currentTable.Size)
+            {
+                startingIndex++;
+                if (activePlayers.Contains(startingIndex))
                 {
-                    if ()   
+                    var bet = this.GetBet(data.GetBetsBitmaps()[startingIndex]);
+                    if (IsActivePlayer(data.GetPlayersBitmaps()[startingIndex - 1]))
+                        if (bet.ToString().Equals(""))
+                        {
+                            (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.CHECK));
+                            //form.Show("Player #" + startingIndex.ToString() + " checks");
+                        }
+                        else
+                        {
+                            if (Convert.ToDouble(bet) <= 0.02)
+                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.BLIND));
+                            if (Convert.ToDouble(bet) > 0.02 && this.betValue < Convert.ToDouble(bet) &&
+                                this.betValue != 0.02)
+                            {
+                                betValue = Convert.ToDouble(bet);
+                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.RAISE));
+                            }
+                            if (Convert.ToDouble(bet) > 0.02 && this.betValue == 0.02)
+                            {
+                                betValue = Convert.ToDouble(bet);
+                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.BET));
+                            }
+                            if (Convert.ToDouble(bet) > 0.02 && this.betValue == Convert.ToDouble(bet))
+                            {
+                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.CALL));
+                            }
+                            //form.Show("Player #" + startingIndex.ToString() + " bets " + bet.ToString());
+                        }
+                    else
+                    {
+                        (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.FOLD));
+                        //form.Show("Player #" + startingIndex.ToString() + " folds");
+                        //this.foldedPlayers.Add(startingIndex);
+                    }
                 }
+
             }
-            else
-            {
-                
-            }
+
+            previousDealerPosition = newDealerPosition;
+            previousHand = newHand;
         }
 
-        private bool PlayerHasCards(List<int>)
-        {
-            return true;
-        }
-
-        private bool RectangleHasColor(Color color, Bitmap bmp)
-        {
-            for (var i = 0; i < bmp.Height; i++)
-                for (var j = 0; j < bmp.Width; j++)
-                    if (bmp.GetPixel(i, j) == color)
-                        return true;
-         
-            return false;
-        }
-
+        
         private int GetNextPlayerIndex(int currentIndex, int tableSize)
         {
             return (currentIndex + 1) % tableSize;
@@ -88,6 +143,39 @@ namespace Input
         private bool IsNewHand(int newDealerPosition, Hand currentHand)
         {
             return (currentHand != this.previousHand && newDealerPosition != this.previousDealerPosition);
+        }
+
+        private void SitPlayers(List<int> previousPlayers, List<int> newPlayers)
+        {
+            for (var i = 1; i < previousPlayers.Count; i++)
+            {
+                if (!newPlayers.Contains(previousPlayers[i]))
+                {
+                    this.currentTable.SitOut(i);
+                }
+            }
+
+            for (var i=1; i<newPlayers.Count; i++)
+            {
+                if (!previousPlayers.Contains(newPlayers[i]))
+                {
+                    this.currentTable.SitIn(i, new OnlinePlayer());
+                }
+            }
+        }
+
+        private string GetBet(BitmapExt bmp)
+        {
+            if (bmp == null)
+                return "";
+            return bmp.ToString();
+        }
+
+        private bool IsActivePlayer(BitmapExt bmp)
+        {
+            if (bmp.HasColor(Color.FromArgb(255, 160, 73, 70)))
+                return true;
+            return false;
         }
 
         private int GetDealerPosition(List<BitmapExt> dealerBitmaps)
@@ -127,6 +215,19 @@ namespace Input
             cards = result;
         }
 
+        private List<int> GetActivePlayers(List<int> currentPlayers)
+        {
+            var result = new List<int>(currentPlayers);
+
+            foreach (var foldedPlayer in foldedPlayers)
+            {
+                if (result.Contains(foldedPlayer))
+                    result.Remove(foldedPlayer);
+            }
+
+            return result;
+        }
+
         private List<Card> GetBoardCards(List<BitmapExt> bmps)
         {
             var ret = new List<Card>();
@@ -145,192 +246,6 @@ namespace Input
         }
     }
 }
-
-//private ScreenGrabber grubber;
-        //private Dictionary<string, string> cards = new Dictionary<string, string>();
-        //private Table currenTable;
-        //private int prevDealerPosition = 100;
-        //private Timer timer; 
-
-        //public ScreenInterpreter()
-        //{
-        //    grubber = new ScreenGrabber();
-        //    this.LoadCards();
-        //    this.currenTable = new Table(0,9);
-        //    this.Timer_tick(this);
-        //    //this.timer = new Timer(this.Timer_tick, null, 100, 100);
-        //}
-
-        //public void Timer_tick(Object sender)
-        //{
-        //    if (grubber.IsReady())
-        //        this.Interprete();
-        //}
-
-        //public override void Interprete()
-        //{
-        
-        //}
-
-        //private void SeatPlayers(Dictionary<int, AbstractPlayer> players, int dealerPosition)
-        //{
-        //    var ho = new HIDOutput();
-        //    players.Add(0, new ArtificialPlayer(BSStrategy.Instance, ho));
-        //    foreach (var player in players)
-        //    {
-        //        this.currenTable.SeatPlayer(player.Key, player.Value);
-        //    }
-            
-        //    //Dealer issue resolving
-        //    if (this.currenTable.Seats[dealerPosition] is EmptySeat)
-        //    {
-        //        this.currenTable.SeatPlayer(dealerPosition, new OnlinePlayer());
-        //        var curSeat = (NonEmptySeat)this.currenTable.Seats[dealerPosition];
-        //        curSeat.Player.Act(0, new Activity(Decision.FOLD));
-        //    }
-        //}
-
-        //private void formListOfActivities(int dealerPosition, Dictionary<int, double> bets)
-        //{
-        //    var ret = new Dictionary<int, Activity>();
-
-        //    var curSeat = (NonEmptySeat)this.currenTable.Seats[dealerPosition];
-        //    curSeat.Player.Act(0, new Activity(Decision.BLIND, 0.01));
-        //    curSeat = curSeat.LeftNonEmpty;
-        //    curSeat.Player.Act(0, new Activity(Decision.BLIND, 0.02));
-        //    curSeat = curSeat.LeftNonEmpty;
-
-        //    int counter = 2;
-            
-        //    while (counter <= bets.Count)
-        //    {
-        //        if (!bets.Keys.Contains(this.currenTable.Seats.IndexOf(curSeat)))
-        //        {
-        //            curSeat.Player.Act(0, new Activity(Decision.FOLD));    
-        //        }
-
-        //        if (curSeat.RightNonEmpty.Player.Activity.Bet < bets[this.currenTable.Seats.IndexOf(curSeat)])
-        //        {
-        //            curSeat.Player.Act(0, new Activity(Decision.RAISE, bets[this.currenTable.Seats.IndexOf(curSeat)]));
-        //        }
-        //        else
-        //        {
-        //            curSeat.Player.Act(0, new Activity(Decision.CALL));
-        //        }
-
-        //        curSeat = curSeat.LeftNonEmpty;
-        //        counter++;
-        //    }
-
-        //}
-
-        
-        //}
-
-        //private Dictionary<int, AbstractPlayer> IntepreteHands(ScreenData data)
-        //{
-        //    var activePlayers = new Dictionary<int,AbstractPlayer>();
-        //    for (var i = 0; i < data.GetHandsBitmaps().Count; i++)
-        //    {
-        //        var flag = false;
-        //        var targetBitmap = data.GetHandsBitmaps()[i];
-        //        for (var j = 0; j < targetBitmap.Height; j++)
-        //        {
-        //            for (var k = 0; k < targetBitmap.Width; k++)
-        //            {
-        //                if (targetBitmap.GetPixel(j,k) == Color.FromArgb(255, 160, 73, 70))
-        //                {
-        //                    activePlayers.Add(i+1, new OnlinePlayer());
-        //                    flag = true;
-        //                    break;
-        //                }
-        //            }
-        //            if (flag)
-        //                break;
-        //        }
-        //    }
-        //    return activePlayers;
-        //}
-
-        //private Dictionary<int, double> InterpreteBets(ScreenData data)
-        //{
-        //    var playerBets = new Dictionary<int, double>();
-        //    for (var i = 0; i < data.GetBetssBitmaps().Count; i++)
-        //    {
-        //        var targetBitmap = data.GetBetssBitmaps()[i];
-        //        if (targetBitmap != null)
-        //        {
-        //            playerBets.Add(i, DigitOcr.Recognize(targetBitmap));
-        //        }
-        //    }
-        //    return playerBets;
-        //}
-
-        //private int InterpeteDealer(ScreenData data)
-        //{
-        //    var dealerColor = Color.FromArgb(255, 169, 23, 13);
-
-        //    var ret = 0;
-        //    for (var i = 0; i < data.GetDealersBitmaps().Count; i++)
-        //    {
-        //        var flag = false;
-        //        var targetBitmap = data.GetDealersBitmaps()[i];
-        //        for (int j = 0; j < targetBitmap.Width; j++)
-        //        {
-        //            for (int k = 0; k < targetBitmap.Height; k++)
-        //            {
-        //                if (targetBitmap.GetPixel(j, k) == dealerColor)
-        //                {
-        //                    ret = i;
-        //                    flag = true;
-        //                    break;
-        //                }
-        //            }
-        //            if (flag) break;
-        //        }
-        //        //if (flag) break;
-        //    }
-        //    return ret;
-        //}
-
-        //private void InterpreteCards(ScreenData data)
-        //{
-        //    //Getting hand
-        //    var hand = new Hand(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[0])]), Card.FromString(cards[GetHash(data.GetCardsBitmaps()[1])]));
-        //    var hero = (ArtificialPlayer)currenTable.ActiveGame.Players[0];
-        //    hero.Hand = hand;
-        //    //Getting flop
-        //    var boardCards = new List<Card>();
-        //    if (cards.ContainsKey(GetHash(data.GetCardsBitmaps()[2])))
-        //    {
-        //        boardCards.Add(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[2])]));
-        //        boardCards.Add(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[3])]));
-        //        boardCards.Add(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[4])]));
-        //    }
-        //    //Getting postflop
-        //    if (cards.ContainsKey(GetHash(data.GetCardsBitmaps()[5])))
-        //    {
-        //        boardCards.Add(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[5])]));
-        //    }
-        //    if (cards.ContainsKey(GetHash(data.GetCardsBitmaps()[6])))
-        //    {
-        //        boardCards.Add(Card.FromString(cards[GetHash(data.GetCardsBitmaps()[6])]));
-        //    }
-
-        //    //Board processing
-        //    switch (boardCards.Count)
-        //    {
-        //        case 0:
-        //        case 3:
-        //            currenTable.ActiveGame.NextStreet(boardCards);
-        //            break;
-        //        case 4:
-        //            currenTable.ActiveGame.NextStreet(boardCards[3]);
-        //            break;
-        //        default:
-        //            currenTable.ActiveGame.NextStreet(boardCards[5]);
-        //            break;
-        //    }
 
 
 

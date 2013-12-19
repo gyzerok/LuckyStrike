@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Windows.Forms;
 
 namespace Input
 {
@@ -35,7 +32,7 @@ namespace Input
             new Rectangle(527,194,105,65),
             new Rectangle(749,190,105,65),
             new Rectangle(831,234,105,65),
-            new Rectangle(877,307,105,65),
+            new Rectangle(883,307,105,65),
             new Rectangle(763,395,105,65),
         };
 
@@ -50,7 +47,7 @@ namespace Input
             new Point(1085,402),
             new Point(824,482),
         };
-       
+
         private readonly List<Rectangle> _cardsRectangles = new List<Rectangle>()
         {
             new Rectangle(650, 460, 15, 40), //hand1
@@ -89,19 +86,18 @@ namespace Input
 
         public override AbstractData Grab()
         {
+            this.snapshot = BitmapExt.FromScreen();
             return new ScreenData(
-                this.GrabHandsRectangles(), 
-                this.GrabCardsRectangles(), 
+                this.GrabHandsRectangles(),
+                this.GrabCardsRectangles(),
                 this.GrabDealerRectangles(),
-                this.GrabBetsRectangles(), 
-                this.GrubActivePlayers()
+                this.GrabBetsRectangles(),
+                this.GrabActivePlayers()
             );
         }
 
         public bool IsReady()
         {
-            this.snapshot = BitmapExt.FromScreen();
-
             if (snapshot.GetPixel(this.readyPoint.X, this.readyPoint.Y) == this.readyColor)
                 return true;
 
@@ -119,8 +115,7 @@ namespace Input
                 // Geting accurate bet text rect
                 croppedBmp = croppedBmp.Crop(Color.FromArgb(255, 255, 246, 207));
 
-                if (croppedBmp != null)
-                    result.Add(croppedBmp);   
+                result.Add(croppedBmp);
             }
 
             return result;
@@ -141,7 +136,7 @@ namespace Input
             return this.snapshot.Crop(this._cardsRectangles);
         }
 
-        public List<int> GrubActivePlayers()
+        public List<int> GrabActivePlayers()
         {
             var result = new List<int>();
 

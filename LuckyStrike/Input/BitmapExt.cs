@@ -17,6 +17,11 @@ namespace Input
             this.bmp = bmp;
         }
 
+        public Bitmap GetBitmap()
+        {
+            return bmp;
+        }
+
         public Color GetPixel(int i, int j)
         {
             return this.bmp.GetPixel(i, j);
@@ -45,6 +50,10 @@ namespace Input
                         minY = Math.Min(minY, i);
                         maxY = Math.Max(maxY, i);
                     }
+                    else
+                    {
+                        this.bmp.SetPixel(j, i, Color.Black);
+                    }
                 }
             }
 
@@ -52,8 +61,8 @@ namespace Input
             {
                 minX--;
                 minY--;
-                maxY++;
-                maxX++;
+                maxY += 3;
+                maxX += 3;
 
                 return new BitmapExt(this.bmp.Clone(new Rectangle(minX, minY, maxX - minX, maxY - minY), PixelFormat.DontCare));
             }
