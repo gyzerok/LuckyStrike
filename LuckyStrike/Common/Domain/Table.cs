@@ -32,16 +32,13 @@ namespace Common.Domain
             }
         }
 
-        public Table(int id, int size)
+        public Table(int id, int size, AbstractStrategy strategy, AbstractOutput output)
         {
             this.Id = id;
             this.Size = size;
             this.Seats = new List<AbstractSeat>();
-        }
-
-        public void NewHand(int dealer)
-        {
-            this.Dealer = dealer;
+            this.Board = new List<Card>();
+            this.Board.Clear();
 
             AbstractSeat prevSeat = new EmptySeat(this, null, null);
             for (int i = 1; i < this.Size; i++)
@@ -57,6 +54,19 @@ namespace Common.Domain
             {
                 prevSeat.Right.Left = prevSeat;
                 prevSeat = prevSeat.Right;
+            }
+
+            this.SeatIn(0, new ArtificialPlayer(strategy, output));
+        }
+
+        public void NewHand(int dealer)
+        {
+            this.Dealer = dealer;
+            this.Board.Clear();
+
+            foreach (var abstractSeat in Seats)
+            {
+                (abstractSeat as NonEmptySeat).ResetActivity();
             }
         }
 

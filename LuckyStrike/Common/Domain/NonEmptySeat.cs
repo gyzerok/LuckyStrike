@@ -68,6 +68,11 @@
             this.Player = player;
         }
 
+        public void ResetActivity()
+        {
+            this.Activity = new Activity(Decision.UNKNOWN);
+        }
+
         public void Act(Activity activity)
         {
             this.Activity = activity;
