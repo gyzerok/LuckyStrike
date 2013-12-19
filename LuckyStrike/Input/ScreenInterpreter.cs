@@ -97,6 +97,7 @@ namespace Input
             for (var i = 0; i < dealerBitmaps.Count; i++)
                 if (dealerBitmaps[i].HasColor(dealerColor))
                     return i;
+            throw new Exception("Dealer has not been recognized");
         }
 
         private Hand GetHeroHand(List<BitmapExt> bmps)
