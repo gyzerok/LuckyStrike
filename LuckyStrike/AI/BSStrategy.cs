@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Common;
 using Common.Domain;
@@ -74,7 +70,7 @@ namespace AI
             return new Activity(Decision.FOLD);
         }
 
-        private List<List<int>> GetSubtable(Hand hand)
+        /*private List<List<int>> GetSubtable(Hand hand)
         {
             foreach (var element in preflopTable)
             {
@@ -146,6 +142,6 @@ namespace AI
             }
 
             throw new Exception("Position identification fail");
-        }
+        }*/
     }
 }

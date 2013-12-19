@@ -8,26 +8,43 @@ namespace Common.Domain
 {
     public class Table
     {
-        private int id;
+        public int Id { get; private set; };
+        public int Size { get; private set; }
+        public int Dealer { get; private set; }
         public List<AbstractSeat> Seats { get; private set; }
-        public List<Game> Games { get; private set; }
+        public List<Card> Board { get; private set; }
 
-        public Game ActiveGame
+        public Street Street
         {
             get
             {
-                return this.Games.Last();
+                switch (this.Board.Count)
+                {
+                    case 0:
+                        return Street.PREFLOP;
+                    case 3:
+                        return Street.FLOP;
+                    case 4:
+                        return Street.TURN;
+                    default: //case 5
+                        return Street.RIVER;
+                }
             }
         }
 
         public Table(int id, int size)
         {
-            this.id = id;
+            this.Id = id;
+            this.Size = size;
             this.Seats = new List<AbstractSeat>();
-            this.Games = new List<Game>();
+        }
+
+        public void NewHand(int dealer)
+        {
+            this.Dealer = dealer;
 
             AbstractSeat prevSeat = new EmptySeat(this, null, null);
-            for (int i = 1; i < size; i++)
+            for (int i = 1; i < this.Size; i++)
             {
                 this.Seats.Add(prevSeat);
                 prevSeat = new EmptySeat(this, null, prevSeat);
@@ -50,6 +67,16 @@ namespace Common.Domain
             player.Seats.Add(seat);
 
             this.Seats[id] = seat;
+        }
+
+        public void NextStreet(Card card)
+        {
+            this.Board.Add(card);
+        }
+
+        public void NextStreet(List<Card> cards)
+        {
+            this.Board = cards;
         }
     }
 }
