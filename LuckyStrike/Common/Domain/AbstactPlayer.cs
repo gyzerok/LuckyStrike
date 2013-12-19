@@ -11,21 +11,12 @@ namespace Common.Domain
     {
         // TODO make dictionary with table id
         public List<NonEmptySeat> Seats;
-        public List<Activity> History { get; private set; }
-
-        public Activity Activity
-        {
-            get
-            {
-                return this.History.Last();
-            }
-        }
 
         public AbstractPlayer()
         {
             this.Seats = new List<NonEmptySeat>();
         }
 
-        public abstract void Act(int tableId, Activity activity = null);
+        public abstract void Act(NonEmptySeat seat, Activity activity = null);
     }
 }

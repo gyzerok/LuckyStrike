@@ -3,6 +3,8 @@
     public class NonEmptySeat : AbstractSeat
     {
         public AbstractPlayer Player { get; private set; }
+        public Hand Hand { get; set; }
+        public Activity Activity { get; private set; }
 
         public NonEmptySeat LeftNonEmpty
         {
@@ -36,6 +38,13 @@
             : base(table, left, right)
         {
             this.Player = player;
+        }
+
+        public void Act(Activity activity)
+        {
+            this.Activity = activity;
+
+            this.Player.Act(this, activity);
         }
     }
 }
