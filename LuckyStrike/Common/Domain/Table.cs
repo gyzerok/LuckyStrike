@@ -60,13 +60,18 @@ namespace Common.Domain
             }
         }
 
-        public void SeatPlayer(int id, AbstractPlayer player)
+        public void SeatIn(int id, AbstractPlayer player)
         {
             var seat = new NonEmptySeat(this, this.Seats[id].Left, this.Seats[id].Right, player);
 
             player.Seats.Add(seat);
 
             this.Seats[id] = seat;
+        }
+
+        public void SitOut(int id)
+        {
+            this.Seats[id] = new EmptySeat(this, this.Seats[id].Left, this.Seats[id].Right);
         }
 
         public void NextStreet(Card card)
