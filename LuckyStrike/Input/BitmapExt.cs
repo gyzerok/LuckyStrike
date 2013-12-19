@@ -110,7 +110,7 @@ namespace Input
 
             var result = ocr.DoOCR(this.bmp, Rectangle.Empty);
 
-            return result[0].Text;
+            return result[0].Text.Replace("$", "");
         }
 
         public string Hash

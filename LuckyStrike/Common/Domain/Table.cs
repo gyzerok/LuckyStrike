@@ -8,7 +8,7 @@ namespace Common.Domain
 {
     public class Table
     {
-        public int Id { get; private set; };
+        public int Id { get; private set; }
         public int Size { get; private set; }
         public int Dealer { get; private set; }
         public List<AbstractSeat> Seats { get; private set; }
@@ -66,7 +66,8 @@ namespace Common.Domain
 
             foreach (var abstractSeat in Seats)
             {
-                (abstractSeat as NonEmptySeat).ResetActivity();
+                if (abstractSeat is NonEmptySeat)
+                    (abstractSeat as NonEmptySeat).ResetActivity();
             }
         }
 

@@ -17,9 +17,7 @@ namespace Input
         private Table currentTable;
         private ScreenGrabber grabber;
         private int prevCardCount = 0;
-        private bool betOrRaise = false;
         private double betValue = 0.02;
-
 
         private List<int> previousPlayers;
         private List<int> foldedPlayers; 
@@ -31,7 +29,6 @@ namespace Input
             this.currentTable = new Table(0, 9, BSStrategy.Instance, new HIDOutput());
             this.previousPlayers = new List<int>(this.currentTable.Size);
             this.foldedPlayers = new List<int>(this.currentTable.Size);
-            
         }
 
         public override void Interprete()
@@ -68,6 +65,8 @@ namespace Input
                 prevCardCount = newCards.Count;
             }
 
+            this.currentTable.NextStreet(newCards);
+
             var activePlayers = this.GetActivePlayers(data.GetActivePlayers());
             var startingIndex = 0;
             var dealerRelativePosition = activePlayers.IndexOf(newDealerPosition);
@@ -78,21 +77,21 @@ namespace Input
 
             if ((!IsNewHand(newDealerPosition, newHand) && newCards.Count == prevCardCount) || blind)
             {
-                startingIndex = 0;
+                startingIndex = 1;
             }
             else
             {
-                startingIndex = newDealerPosition;
+                startingIndex = newDealerPosition+1;
             }
 
             //form.Show("Iterating from: " + startingIndex.ToString());
 
             while (startingIndex < currentTable.Size)
             {
-                startingIndex++;
                 if (activePlayers.Contains(startingIndex))
                 {
                     var bet = this.GetBet(data.GetBetsBitmaps()[startingIndex]);
+
                     if (IsActivePlayer(data.GetPlayersBitmaps()[startingIndex - 1]))
                         if (bet.ToString().Equals(""))
                         {
@@ -127,9 +126,13 @@ namespace Input
                         //this.foldedPlayers.Add(startingIndex);
                     }
                 }
-
+                startingIndex++;
             }
 
+            (this.currentTable.Seats[0] as NonEmptySeat).Act(null);
+
+            
+                
             previousDealerPosition = newDealerPosition;
             previousHand = newHand;
         }
@@ -155,20 +158,29 @@ namespace Input
                 }
             }
 
-            for (var i=1; i<newPlayers.Count; i++)
+
+
+            for (var i=0; i<newPlayers.Count; i++)
             {
                 if (!previousPlayers.Contains(newPlayers[i]))
                 {
-                    this.currentTable.SitIn(i, new OnlinePlayer());
+                    this.currentTable.SitIn(i+1, new OnlinePlayer());
                 }
             }
         }
 
         private string GetBet(BitmapExt bmp)
         {
+            
             if (bmp == null)
                 return "";
-            return bmp.ToString();
+            else
+            {
+                var result = bmp.ToString();
+                result = result.Replace('n', '0');
+                result = result.Replace('.', ',');
+                return result;
+            }    
         }
 
         private bool IsActivePlayer(BitmapExt bmp)
@@ -180,7 +192,7 @@ namespace Input
 
         private int GetDealerPosition(List<BitmapExt> dealerBitmaps)
         {
-            var dealerColor = Color.FromArgb(255, 169, 23, 13);
+            var dealerColor = Color.FromArgb(255, 203, 199, 56);
 
             for (var i = 0; i < dealerBitmaps.Count; i++)
                 if (dealerBitmaps[i].HasColor(dealerColor))
