@@ -19,11 +19,12 @@ namespace Common.Domain
 
         public override void Act(NonEmptySeat seat, Activity activity = null)
         {
-            var act = this.strategy.Process(seat);
+            if (seat.Table.Street == Street.PREFLOP)
+            {
+                var act = this.strategy.Process(seat);
 
-            this.History.Add(act);
-
-            this.output.Emulate(act);
+                this.output.Emulate(act);
+            }
         }
     }
 }
