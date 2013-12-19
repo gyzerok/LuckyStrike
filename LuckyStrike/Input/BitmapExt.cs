@@ -76,8 +76,8 @@ namespace Input
         public bool HasColor(Color color)
         {
             for (int i = 0; i < this.bmp.Height; i++)
-                for (int j = 0; i < this.bmp.Width; j++)
-                    if (this.bmp.GetPixel(i, j) == color)
+                for (int j = 0; j < this.bmp.Width; j++)
+                    if (this.bmp.GetPixel(j, i) == color)
                         return true;
 
             return false;

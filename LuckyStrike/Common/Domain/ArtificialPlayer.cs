@@ -10,7 +10,6 @@ namespace Common.Domain
     {
         private AbstractOutput output;
         private AbstractStrategy strategy;
-        public Hand Hand { get; set; }
 
         public ArtificialPlayer(AbstractStrategy strategy, AbstractOutput output)
         {
@@ -18,9 +17,9 @@ namespace Common.Domain
             this.output = output;
         }
 
-        public override void Act(int tableId, Activity activity = null)
+        public override void Act(NonEmptySeat seat, Activity activity = null)
         {
-            var act = this.strategy.Process(this.Seats[tableId]);
+            var act = this.strategy.Process(seat);
 
             this.History.Add(act);
 

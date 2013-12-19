@@ -55,11 +55,11 @@ namespace AI
 
         public override Activity Process(NonEmptySeat seat)
         {
-            var player = (seat.Player as ArtificialPlayer);
+            /*var player = (seat.Player as ArtificialPlayer);
 
             if (seat.Table.ActiveGame.Street == Street.PREFLOP)
             {
-                var subtable = this.GetSubtable(player.Hand);
+                var subtable = this.GetSubtable(seat.Hand);
 
                 var previousDecision = this.GetPreviousDecision(seat);
                 var position = this.GetPosition(seat);
@@ -69,7 +69,9 @@ namespace AI
                 return new Activity((Decision)decision);
             }
 
-            return null;
+            return null;*/
+
+            return new Activity(Decision.FOLD);
         }
 
         private List<List<int>> GetSubtable(Hand hand)
@@ -89,7 +91,7 @@ namespace AI
         {
             var previousSeat = seat.RightNonEmpty;
 
-            if (previousSeat.Player.Activity.Decision == Decision.BLIND)
+            if (previousSeat.Activity.Decision == Decision.BLIND)
             {
                 return Decision.FOLD;
             }
@@ -99,13 +101,13 @@ namespace AI
                 throw new Exception("Table is empty");
             }
 
-            return previousSeat.Player.Activity.Decision;
+            return previousSeat.Activity.Decision;
         }
 
         private Position GetPosition(NonEmptySeat seat)
         {
-            if (seat.LeftNonEmpty.Player.Activity.Decision == Decision.BLIND ||
-                seat.RightNonEmpty.Player.Activity.Decision == Decision.BLIND)
+            if (seat.LeftNonEmpty.Activity.Decision == Decision.BLIND ||
+                seat.RightNonEmpty.Activity.Decision == Decision.BLIND)
             {
                 return Position.BLIND;
             }
