@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-using Common;
+using Common.Abstract;
 using Common.Domain;
 
 namespace AI

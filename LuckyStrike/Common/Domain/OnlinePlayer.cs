@@ -1,4 +1,6 @@
-﻿namespace Common.Domain
+﻿using Common.Abstract;
+
+namespace Common.Domain
 {
     public class OnlinePlayer : AbstractPlayer
     {
