@@ -79,7 +79,7 @@ namespace Common.Domain
 
         public void ResetActivity()
         {
-            this.Activity = new Activity(Decision.UNKNOWN);
+            this.Activity = new Activity(Decision.FOLD);
         }
 
         public void Act(Activity activity)
