@@ -17,7 +17,9 @@ namespace Input
         private Table currentTable;
         private ScreenGrabber grabber;
         private int prevCardCount = 0;
-        private double betValue = 0.02;
+        private double smallBlind = 0.01;
+        private double betValue;
+        private bool isPreflop;
 
         private List<int> previousPlayers;
         private List<int> foldedPlayers; 
@@ -42,6 +44,8 @@ namespace Input
             if (IsNewHand(newDealerPosition, newHand))
             {
                 //form.Clear();
+                this.betValue = this.smallBlind;
+                this.foldedPlayers.Clear();
                 this.SitPlayers(this.previousPlayers, data.GetActivePlayers());
                 currentTable.NewHand(newDealerPosition);
                 (currentTable.Seats[0] as NonEmptySeat).Hand = newHand;
@@ -67,6 +71,9 @@ namespace Input
 
             this.currentTable.NextStreet(newCards);
 
+            //Getting current state
+            this.isPreflop = (this.currentTable.Street == Street.PREFLOP) ? true : false;
+
             var activePlayers = this.GetActivePlayers(data.GetActivePlayers());
             var startingIndex = 0;
             var dealerRelativePosition = activePlayers.IndexOf(newDealerPosition);
@@ -75,7 +82,7 @@ namespace Input
                 ? true
                 : false;
 
-            if ((!IsNewHand(newDealerPosition, newHand) && newCards.Count == prevCardCount) || blind)
+            if ((!IsNewHand(newDealerPosition, newHand) && newCards.Count == prevCardCount) || (blind && isPreflop))
             {
                 startingIndex = 1;
             }
@@ -91,39 +98,35 @@ namespace Input
                 if (activePlayers.Contains(startingIndex))
                 {
                     var bet = this.GetBet(data.GetBetsBitmaps()[startingIndex]);
+                    var currentPlayer = (this.currentTable.Seats[startingIndex] as NonEmptySeat);
 
                     if (IsActivePlayer(data.GetPlayersBitmaps()[startingIndex - 1]))
-                        if (bet.ToString().Equals(""))
+                    {
+                        var currentBet = Convert.ToDouble(bet);
+                        
+                        if (currentBet == smallBlind || betValue == smallBlind)
                         {
-                            (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.CHECK));
-                            //form.Show("Player #" + startingIndex.ToString() + " checks");
+                            currentPlayer.Act(new Activity(Decision.BLIND));
+                            this.betValue = currentBet;
                         }
-                        else
+
+                        else if (currentBet == betValue)
                         {
-                            if (Convert.ToDouble(bet) <= 0.02)
-                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.BLIND));
-                            if (Convert.ToDouble(bet) > 0.02 && this.betValue < Convert.ToDouble(bet) &&
-                                this.betValue != 0.02)
-                            {
-                                betValue = Convert.ToDouble(bet);
-                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.RAISE));
-                            }
-                            if (Convert.ToDouble(bet) > 0.02 && this.betValue == 0.02)
-                            {
-                                betValue = Convert.ToDouble(bet);
-                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.BET));
-                            }
-                            if (Convert.ToDouble(bet) > 0.02 && this.betValue == Convert.ToDouble(bet))
-                            {
-                                (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.CALL));
-                            }
-                            //form.Show("Player #" + startingIndex.ToString() + " bets " + bet.ToString());
+                            currentPlayer.Act(new Activity(Decision.CALL));
+                            this.betValue = currentBet;
                         }
+
+                        else if (currentBet > betValue)
+                        {
+                            currentPlayer.Act(new Activity(Decision.RAISE));
+                            this.betValue = currentBet;    
+                        }
+                    }
                     else
                     {
-                        (this.currentTable.Seats[startingIndex] as NonEmptySeat).Act(new Activity(Decision.FOLD));
+                        currentPlayer.Act(new Activity(Decision.FOLD));
                         //form.Show("Player #" + startingIndex.ToString() + " folds");
-                        //this.foldedPlayers.Add(startingIndex);
+                        this.foldedPlayers.Add(startingIndex);
                     }
                 }
                 startingIndex++;
@@ -131,8 +134,6 @@ namespace Input
 
             (this.currentTable.Seats[0] as NonEmptySeat).Act(null);
 
-            
-                
             previousDealerPosition = newDealerPosition;
             previousHand = newHand;
         }

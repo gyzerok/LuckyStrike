@@ -61,8 +61,8 @@ namespace Input
             {
                 minX--;
                 minY--;
-                maxY += 3;
-                maxX += 3;
+                maxY++;
+                maxX++;
 
                 return new BitmapExt(this.bmp.Clone(new Rectangle(minX, minY, maxX - minX, maxY - minY), PixelFormat.DontCare));
             }
@@ -84,8 +84,8 @@ namespace Input
 
         public bool HasColor(Color color)
         {
-            for (int i = 0; i < this.bmp.Height; i++)
-                for (int j = 0; j < this.bmp.Width; j++)
+            for (var i = 0; i < this.bmp.Height; i++)
+                for (var j = 0; j < this.bmp.Width; j++)
                     if (this.bmp.GetPixel(j, i) == color)
                         return true;
 
