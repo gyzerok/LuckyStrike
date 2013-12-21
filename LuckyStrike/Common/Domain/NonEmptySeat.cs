@@ -79,6 +79,9 @@ namespace Common.Domain
         {
             this.Activity = activity;
 
+            if (activity.Decision == Decision.FOLD)
+                this.Table.ActivePlayersCount--;
+
             this.Player.Act(this, activity);
         }
     }
