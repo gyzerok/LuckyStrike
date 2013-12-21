@@ -78,6 +78,8 @@ namespace Common.Domain
         public void SitIn(int id, AbstractPlayer player)
         {
             var seat = new NonEmptySeat(this, this.Seats[id].Left, this.Seats[id].Right, player);
+            seat.Left.Right = seat;
+            seat.Right.Left = seat;
 
             player.Seats.Add(seat);
 
