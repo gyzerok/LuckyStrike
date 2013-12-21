@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Common;
+using Common.Abstract;
 using Common.Domain;
 
 namespace AI
@@ -51,9 +52,7 @@ namespace AI
 
         public override Activity Process(NonEmptySeat seat)
         {
-            /*var player = (seat.Player as ArtificialPlayer);
-
-            if (seat.Table.ActiveGame.Street == Street.PREFLOP)
+            if (seat.Table.Street == Street.PREFLOP)
             {
                 var subtable = this.GetSubtable(seat.Hand);
 
@@ -65,12 +64,10 @@ namespace AI
                 return new Activity((Decision)decision);
             }
 
-            return null;*/
-
-            return new Activity(Decision.FOLD);
+            return null;
         }
 
-        /*private List<List<int>> GetSubtable(Hand hand)
+        private List<List<int>> GetSubtable(Hand hand)
         {
             foreach (var element in preflopTable)
             {
@@ -85,19 +82,29 @@ namespace AI
 
         private Decision GetPreviousDecision(NonEmptySeat seat)
         {
-            var previousSeat = seat.RightNonEmpty;
+            var previousSeat = seat.RightActive;
 
-            if (previousSeat.Activity.Decision == Decision.BLIND)
+            while (previousSeat != seat)
             {
-                return Decision.FOLD;
+                if (previousSeat.Activity.Decision == Decision.BLIND)
+                {
+                    return Decision.FOLD;
+                }
+
+                if (previousSeat.Activity.Decision == Decision.RAISE)
+                {
+                    return Decision.RAISE;
+                }
+
+                if (seat == previousSeat)
+                {
+                    throw new Exception("Table is empty");
+                }
+
+                previousSeat = previousSeat.RightActive;
             }
 
-            if (seat == previousSeat)
-            {
-                throw new Exception("Table is empty");
-            }
-
-            return previousSeat.Activity.Decision;
+            return Decision.CALL;
         }
 
         private Position GetPosition(NonEmptySeat seat)
@@ -113,7 +120,7 @@ namespace AI
             positions.Add(3);
             positions.Add(2);
 
-            int minus = seat.Table.Seats.Count - seat.Table.ActiveGame.Players.Count;
+            int minus = seat.Table.Seats.Count - seat.Table.ActivePlayersCount;
             int i = 0;
             while (minus > 0)
             {
@@ -135,13 +142,10 @@ namespace AI
                 positions[j]--;
                 if (positions[j] == 0) j--;
 
-                while (!seat.Table.ActiveGame.Players.Contains(checkingSeat.RightNonEmpty.Player))
-                {
-                    checkingSeat = checkingSeat.RightNonEmpty;
-                }
+                checkingSeat = checkingSeat.RightActive;
             }
 
             throw new Exception("Position identification fail");
-        }*/
+        }
     }
 }

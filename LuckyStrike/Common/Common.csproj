@@ -57,10 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractOutput.cs" />
-    <Compile Include="AbstractStrategy.cs" />
-    <Compile Include="Domain\AbstactPlayer.cs" />
-    <Compile Include="Domain\AbstactSeat.cs" />
+    <Compile Include="Abstract\AbstractOutput.cs" />
+    <Compile Include="Abstract\AbstractStrategy.cs" />
+    <Compile Include="Abstract\AbstactPlayer.cs" />
+    <Compile Include="Abstract\AbstactSeat.cs" />
     <Compile Include="Domain\Activity.cs" />
     <Compile Include="Domain\ArtificialPlayer.cs" />
     <Compile Include="Domain\Card.cs" />

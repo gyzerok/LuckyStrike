@@ -1,4 +1,6 @@
-﻿namespace Common.Domain
+﻿using Common.Abstract;
+
+namespace Common.Domain
 {
     public class NonEmptySeat : AbstractSeat
     {
@@ -76,6 +78,9 @@
         public void Act(Activity activity)
         {
             this.Activity = activity;
+
+            if (activity.Decision == Decision.FOLD)
+                this.Table.ActivePlayersCount--;
 
             this.Player.Act(this, activity);
         }

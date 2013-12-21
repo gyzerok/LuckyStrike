@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
+using Common.Abstract;
 
 namespace Common.Domain
 {
@@ -13,6 +11,8 @@ namespace Common.Domain
         public int Dealer { get; private set; }
         public List<AbstractSeat> Seats { get; private set; }
         public List<Card> Board { get; private set; }
+
+        public int ActivePlayersCount { get; set; }
 
         public Street Street
         {
@@ -66,8 +66,12 @@ namespace Common.Domain
 
             foreach (var abstractSeat in Seats)
             {
+                this.ActivePlayersCount = 0;
                 if (abstractSeat is NonEmptySeat)
+                {
                     (abstractSeat as NonEmptySeat).ResetActivity();
+                    this.ActivePlayersCount++;
+                }
             }
         }
 

@@ -5,7 +5,9 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Domain
+using Common.Domain;
+
+namespace Common.Abstract
 {
     public abstract class AbstractPlayer
     {
