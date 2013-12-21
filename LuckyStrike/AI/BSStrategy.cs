@@ -107,8 +107,8 @@ namespace AI
 
         private Position GetPosition(NonEmptySeat seat)
         {
-            if (seat.LeftNonEmpty.Activity.Decision == Decision.BLIND ||
-                seat.RightNonEmpty.Activity.Decision == Decision.BLIND)
+            var dealer = seat.Table.Seats[seat.Table.Dealer];
+            if (seat.RightActive == dealer || seat.RightActive.RightActive == dealer)
             {
                 return Position.BLIND;
             }
