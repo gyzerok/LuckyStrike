@@ -1,4 +1,5 @@
-﻿using Common.Abstract;
+﻿using System;
+using Common.Abstract;
 
 namespace Common.Domain
 {
@@ -13,9 +14,12 @@ namespace Common.Domain
             get
             {
                 AbstractSeat checkingSeat = this.Left;
-                while (checkingSeat is EmptySeat || (checkingSeat as NonEmptySeat).Activity.Decision != Decision.FOLD)
+                while (checkingSeat is EmptySeat || (checkingSeat as NonEmptySeat).Activity.Decision == Decision.FOLD)
                 {
                     checkingSeat = checkingSeat.Left;
+
+                    if (checkingSeat == this)
+                        throw new Exception("What the fuck?");
                 }
 
                 return (NonEmptySeat) checkingSeat;
@@ -27,9 +31,12 @@ namespace Common.Domain
             get
             {
                 AbstractSeat checkingSeat = this.Right;
-                while (checkingSeat is EmptySeat || (checkingSeat as NonEmptySeat).Activity.Decision != Decision.FOLD)
+                while (checkingSeat is EmptySeat || (checkingSeat as NonEmptySeat).Activity.Decision == Decision.FOLD)
                 {
                     checkingSeat = checkingSeat.Right;
+
+                    if (checkingSeat == this)
+                        throw new Exception("What the fuck?");
                 }
 
                 return (NonEmptySeat)checkingSeat;
