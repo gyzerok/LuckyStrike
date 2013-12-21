@@ -86,15 +86,12 @@ namespace AI
 
             while (previousSeat != seat)
             {
-                if (previousSeat.Activity.Decision == Decision.BLIND)
-                {
-                    return Decision.FOLD;
-                }
-
                 if (previousSeat.Activity.Decision == Decision.RAISE)
                 {
                     return Decision.RAISE;
                 }
+
+                if (previousSeat.Activity.Decision == Decision.CALL)
 
                 if (seat == previousSeat)
                 {
@@ -104,7 +101,7 @@ namespace AI
                 previousSeat = previousSeat.RightActive;
             }
 
-            return Decision.CALL;
+            return Decision.FOLD;
         }
 
         private Position GetPosition(NonEmptySeat seat)
