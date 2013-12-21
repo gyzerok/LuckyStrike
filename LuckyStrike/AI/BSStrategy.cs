@@ -56,6 +56,9 @@ namespace AI
             {
                 var subtable = this.GetSubtable(seat.Hand);
 
+                if (subtable == null) 
+                    return new Activity(Decision.FOLD);
+
                 var previousDecision = this.GetPreviousDecision(seat);
                 var position = this.GetPosition(seat);
 
