@@ -115,14 +115,14 @@ namespace AI
 
             var positions = this.CalcPositions(seat);
 
-            var checkingSeat = seat;
-            if (checkingSeat.Player == seat.Player) return Position.LATE;
+            var checkingSeat = (dealer as NonEmptySeat);
+            if (checkingSeat == seat) return Position.LATE;
 
             int j = positions.Count - 1;
             while (j > 0)
             {
-                if (checkingSeat.Player == seat.Player)
-                    return (Position) j + 1;
+                if (checkingSeat == seat)
+                    return (Position)(j + 1);
 
                 positions[j]--;
                 if (positions[j] == 0) j--;
