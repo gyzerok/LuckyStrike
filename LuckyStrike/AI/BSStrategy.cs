@@ -85,10 +85,12 @@ namespace AI
 
         private Decision GetPreviousDecision(NonEmptySeat seat)
         {
-            var previousSeat = seat.RightActive;
+            var previousSeat = seat;
 
-            while (previousSeat != seat)
+            while (previousSeat.RightActive != seat)
             {
+                previousSeat = previousSeat.RightActive;
+
                 if (previousSeat.Activity.Decision == Decision.RAISE)
                 {
                     return Decision.RAISE;
@@ -100,8 +102,6 @@ namespace AI
                 {
                     throw new Exception("Table is empty");
                 }
-
-                previousSeat = previousSeat.RightActive;
             }
 
             return Decision.FOLD;
@@ -115,20 +115,7 @@ namespace AI
                 return Position.BLIND;
             }
 
-            var positions = new List<int>();
-            positions.Add(2);
-            positions.Add(3);
-            positions.Add(2);
-
-            int minus = seat.Table.Seats.Count - seat.Table.ActivePlayersCount;
-            int i = 0;
-            while (minus > 0)
-            {
-                positions[i]--;
-                minus--;
-
-                if (positions[i] == 0) i++;
-            }
+            var positions = this.CalcPositions(seat);
 
             var checkingSeat = seat;
             if (checkingSeat.Player == seat.Player) return Position.LATE;
@@ -146,6 +133,26 @@ namespace AI
             }
 
             throw new Exception("Position identification fail");
+        }
+
+        private List<int> CalcPositions(NonEmptySeat seat)
+        {
+            var positions = new List<int>();
+            positions.Add(2);
+            positions.Add(3);
+            positions.Add(2);
+
+            int minus = seat.Table.Seats.Count - seat.Table.ActivePlayersCount;
+            int i = 0;
+            while (minus > 0)
+            {
+                positions[i]--;
+                minus--;
+
+                if (positions[i] == 0) i++;
+            }
+
+            return positions;
         }
     }
 }
