@@ -132,7 +132,7 @@ namespace Input
                 startingIndex++;
             }
 
-            (this.currentTable.Seats[0] as NonEmptySeat).Act(null);
+            (this.currentTable.Seats[0] as NonEmptySeat).Act(new Activity(Decision.UNKNOWN));
 
             previousDealerPosition = newDealerPosition;
             previousHand = newHand;

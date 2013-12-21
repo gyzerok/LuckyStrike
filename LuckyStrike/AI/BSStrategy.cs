@@ -62,11 +62,10 @@ namespace AI
                 var previousDecision = this.GetPreviousDecision(seat);
                 var position = this.GetPosition(seat);
 
-                var decision = subtable[((int)previousDecision) - 4][(int) position];
+                var decision = subtable[((int)previousDecision) - 4][(int) position-1];
 
                 return new Activity((Decision)decision);
             }
-
             return null;
         }
 
@@ -79,7 +78,6 @@ namespace AI
                     return element.Value;
                 }
             }
-
             return null;
         }
 
@@ -142,8 +140,8 @@ namespace AI
             positions.Add(3);
             positions.Add(2);
 
-            int minus = seat.Table.Seats.Count - seat.Table.ActivePlayersCount;
-            int i = 0;
+            var minus = seat.Table.Seats.Count - seat.Table.ActivePlayersCount;
+            var i = 0;
             while (minus > 0)
             {
                 positions[i]--;

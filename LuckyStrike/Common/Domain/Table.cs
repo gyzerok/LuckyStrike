@@ -63,10 +63,10 @@ namespace Common.Domain
         {
             this.Dealer = dealer;
             this.Board.Clear();
+            this.ActivePlayersCount = 0;
 
-            foreach (var abstractSeat in Seats)
+            foreach (var abstractSeat in this.Seats)
             {
-                this.ActivePlayersCount = 0;
                 if (abstractSeat is NonEmptySeat)
                 {
                     (abstractSeat as NonEmptySeat).ResetActivity();
